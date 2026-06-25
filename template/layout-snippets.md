@@ -5,8 +5,8 @@ File này dùng như thư viện bố cục chuẩn để chuyển các slide Po
 Mỗi layout bên dưới có thể copy trực tiếp vào file bài học, ví dụ:
 
 ```txt
-courses/<course_id>/md_slides/bai_02.md
-courses/<course_id>/md_slides/bai_03.md
+courses/<course_id>/md_slides/bai_02.mdx
+courses/<course_id>/md_slides/bai_03.mdx
 ```
 
 Quy ước chung:

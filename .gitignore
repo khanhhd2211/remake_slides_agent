@@ -1,5 +1,6 @@
 # Byte-compiled / optimized / DLL files
 .DS_Store
+.marp-cache/
 __pycache__/
 *.py[codz]
 *$py.class
@@ -11,6 +12,7 @@ courses/*/pptx-analysis/*
 courses/*/md_slides/*
 !courses/*/md_slides/
 !courses/*/md_slides/*.md
+!courses/*/md_slides/*.mdx
 
 # C extensions
 *.so

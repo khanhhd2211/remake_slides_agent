@@ -5,7 +5,7 @@
 This repository converts course PowerPoint decks into Marp-based slide decks and supports multiple subjects under `courses/`.
 
 - `courses/<course_id>/source-ppt/` stores original `.pptx` files such as `bai_01.pptx`.
-- `courses/<course_id>/md_slides/` contains editable Marp Markdown decks for each subject.
+- `courses/<course_id>/md_slides/` contains editable Marp MDX decks for each subject.
 - `courses/<course_id>/assets/` holds images referenced by that subject's slides.
 - `courses/<course_id>/pptx-analysis/` stores extracted PPTX structure.
 - `courses/<course_id>/output/` stores generated decks and rendered exports.
@@ -26,13 +26,13 @@ Common commands:
 - `npm run watch:css` rebuilds the theme when template sources change.
 - `npm run preview` starts the Marp preview server for `courses/giao_duc_phap_luat/md_slides/`.
 - `COURSE=course_a npm run preview` previews another course.
-- `COURSE=course_a DECK=bai_01 npm run html` builds CSS and exports one deck to HTML.
+- `COURSE=course_a DECK=bai_01 npm run html` renders MDX components, builds CSS, and exports one deck to HTML.
 - `python3 tools/render_output_slides.py --course course_a --dry-run` checks PPTX render commands.
 - `python3 tools/render_output_slides.py --course course_a --only bai_04` renders selected output decks.
 
 ## Coding Style & Naming Conventions
 
-Use CommonJS for Node scripts, matching `engine.js` and `tools/*.js`. Prefer `const`, double quotes, 2-space indentation, and explicit `path.join` or `Path` handling for repository paths. Python scripts should use standard-library-first code, type hints where useful, `argparse` for CLIs, and `snake_case` names. Name courses with lowercase snake case, for example `giao_duc_phap_luat`, and lesson files as `bai_XX.md` or `bai_XX.pptx`.
+Use CommonJS for Node scripts, matching `engine.js` and `tools/*.js`; use ESM for MDX tooling. Prefer `const`, double quotes, 2-space indentation, and explicit `path.join` or `Path` handling for repository paths. Python scripts should use standard-library-first code, type hints where useful, `argparse` for CLIs, and `snake_case` names. Name courses with lowercase snake case, for example `giao_duc_phap_luat`, and lesson files as `bai_XX.mdx` or `bai_XX.pptx`.
 
 ## Testing Guidelines
 

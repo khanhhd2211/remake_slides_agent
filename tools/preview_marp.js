@@ -6,6 +6,7 @@ const root = path.resolve(__dirname, "..");
 const course = process.env.COURSE || process.argv[2] || "giao_duc_phap_luat";
 const courseRoot = path.join(root, "courses", course);
 const slidesDir = path.join(courseRoot, "md_slides");
+const renderedSlidesDir = path.join(root, ".marp-cache", course, "md_slides");
 const marpBin = path.join(root, "node_modules", ".bin", "marp");
 
 if (!fs.existsSync(slidesDir)) {
@@ -22,7 +23,20 @@ function buildTheme() {
   return result.status === 0;
 }
 
-if (!buildTheme()) {
+function renderComponents() {
+  const result = spawnSync(
+    process.execPath,
+    [path.join(root, "tools", "render_mdx.mjs"), "--course", course, "--all"],
+    {
+      cwd: root,
+      stdio: "inherit",
+    }
+  );
+
+  return result.status === 0;
+}
+
+if (!buildTheme() || !renderComponents()) {
   process.exit(1);
 }
 
@@ -31,7 +45,7 @@ const marp = spawn(
   [
     "--server",
     "--input-dir",
-    path.relative(root, slidesDir),
+    path.relative(root, renderedSlidesDir),
     "--theme",
     "./template/theme.css",
     "--engine",
@@ -48,10 +62,14 @@ const scheduleBuild = (filename = "") => {
   }
 
   clearTimeout(timeout);
-  timeout = setTimeout(buildTheme, 150);
+  timeout = setTimeout(() => {
+    if (renderComponents()) {
+      buildTheme();
+    }
+  }, 150);
 };
 
-for (const dir of [slidesDir, path.join(root, "template")]) {
+for (const dir of [slidesDir, path.join(root, "template"), path.join(root, "components")]) {
   fs.watch(dir, { recursive: true }, (_event, filename) => {
     scheduleBuild(filename ? String(filename) : "");
   });

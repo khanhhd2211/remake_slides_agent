@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build:css": "node ./tools/build_marp_theme.js",
+    "render:components": "node ./tools/render_mdx.mjs",
     "watch:css": "node ./tools/build_marp_theme.js --watch",
     "preview": "node ./tools/preview_marp.js",
     "html": "npm run build:css && node ./tools/export_html.js"
@@ -17,5 +18,11 @@
     "@marp-team/marp-cli": "^4.4.0",
     "@tailwindcss/cli": "^4.3.1",
     "tailwindcss": "^4.3.1"
+  },
+  "dependencies": {
+    "@mdx-js/mdx": "^3.1.1",
+    "@mdx-js/react": "^3.1.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
   }
 }

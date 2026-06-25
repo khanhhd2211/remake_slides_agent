@@ -48,7 +48,7 @@ const scheduleBuild = (filename = "") => {
   timeout = setTimeout(buildTheme, 150);
 };
 
-for (const dir of ["courses", "template"]) {
+for (const dir of ["courses", "template", "components"]) {
   fs.watch(path.join(root, dir), { recursive: true }, (_event, filename) => {
     scheduleBuild(filename ? String(filename) : "");
   });

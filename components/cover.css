@@ -1,0 +1,73 @@
+@layer components {
+  section.cover {
+    position: relative;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    background: #151515;
+  }
+
+  section.cover::after {
+    display: none !important;
+  }
+
+  .cover-bg {
+    position: absolute;
+    inset: -18px;
+    background-image:
+      linear-gradient(rgba(20, 14, 9, 0.58), rgba(20, 14, 9, 0.58)),
+      var(--cover-image, linear-gradient(135deg, #13284b, #bd2d2d));
+    background-size: cover;
+    background-position: center;
+    filter: blur(6px) saturate(0.75) brightness(0.72);
+    transform: scale(1.04);
+  }
+
+  .cover-title {
+    position: relative;
+    text-align: center;
+    color: #fff8eb;
+    font-size: 78px;
+    font-weight: 850;
+    line-height: 1.2;
+    text-transform: uppercase;
+    text-shadow: 0 6px 28px rgba(0, 0, 0, 0.48);
+  }
+
+  .cover-title .lesson-label {
+    position: absolute;
+    top: -64px;
+    left: 50%;
+    display: inline-block;
+    padding: 9px 24px;
+    border: 1px solid rgba(255, 247, 232, 0.72);
+    border-radius: 999px;
+    color: rgba(255, 247, 232, 0.92);
+    font-size: 22px;
+    font-weight: 750;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-shadow: none;
+    transform: translateX(-50%);
+  }
+
+  .cover-school {
+    position: absolute;
+    right: 74px;
+    bottom: 58px;
+    left: 74px;
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    color: rgba(255, 248, 235, 0.9);
+    font-size: 17px;
+    font-weight: 750;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.36);
+    opacity: 0.72;
+  }
+
+  .school-name {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+}
