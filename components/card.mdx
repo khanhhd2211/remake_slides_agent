@@ -1,0 +1,15 @@
+<div
+  className={`rounded-lg border border-[var(--line)] px-[26px] py-3 shadow-[0_18px_48px_rgba(23,35,59,0.08)] ${
+    props.accent === "navy"
+      ? "border-transparent bg-[var(--navy)] text-[#fffaf1]"
+      : props.accent === "red"
+        ? "border-transparent bg-[var(--red)] text-[#fffaf1]"
+        : props.accent === "blue"
+          ? "border-transparent bg-[var(--blue)] text-[#fffaf1]"
+          : props.accent === "green"
+            ? "border-transparent bg-[var(--green)] text-[#fffaf1]"
+            : "bg-white/80"
+  } ${props.className || ""}`}
+>
+  {props.children}
+</div>

@@ -1,10 +1,23 @@
 # Components
 
-Reusable slide components live in `slide-components.mjs`. Write component tags directly in `.mdx` decks, then run `npm run html`; the build renders MDX components into `.marp-cache/` before Marp converts the deck.
+Reusable slide components live as `.mdx` files in this folder. Write component tags directly in course `.mdx` decks, then run `npm run html`; the build renders MDX components into `.marp-cache/` before Marp converts the deck.
+
+File names become component names automatically:
+
+- `cover-slide.mdx` -> `<CoverSlide />`
+- `card.mdx` -> `<Card />`
+- `deck-logo.mdx` -> `<DeckLogo />`
+- `kicker.mdx` -> `<Kicker />`
+- `thanks-card.mdx` -> `<ThanksCard />`
 
 ## Cover Slide
 
-Use with `<!-- _class: cover -->`.
+Use with a Marp directive in MDX:
+
+```mdx
+{/* _class: relative grid place-items-center overflow-hidden bg-[#151515] p-0 */}
+{/* _paginate: false */}
+```
 
 ```html
 <CoverSlide
@@ -30,8 +43,8 @@ Optional props: `src`, `alt`, `position`.
 
 Use on a final slide with:
 
-```html
-<!-- _class: relative grid place-items-center p-0 bg-[var(--navy)] -->
+```mdx
+{/* _class: relative grid place-items-center overflow-hidden bg-[var(--navy)] p-0 */}
 ```
 
 ```html
@@ -44,8 +57,15 @@ Use on a final slide with:
 />
 ```
 
-Optional props: `logoSrc`, `logoAlt`, `title`, `address`, `hotline`, `email`, `website`.
+Optional props: `logoSrc`, `logoAlt`, `background`, `title`, `address`, `hotline`, `email`, `website`.
 
 ## Styling
 
-Component CSS is split into `deck-logo.css`, `cover.css`, and `content.css`, then imported by `template/theme.source.css`. Keep layout decisions in MDX with Tailwind classes; keep repeated UI structure in MDX components.
+Components are styled with Tailwind classes directly inside `.mdx` files. Keep layout decisions in course MDX with Tailwind classes; keep repeated UI structure in component MDX files.
+
+Use Tailwind classes directly, and keep exact arbitrary values when the slide layout depends on them:
+
+- Prefer exact slide values such as `h-[430px]`, `gap-[52px]`, `px-[18px]`, `py-[22px]`, `text-[20px]` when matching an existing design.
+- Tailwind IntelliSense canonical warnings are acceptable in `.mdx` slide/component files.
+- Use CSS variables with arbitrary syntax such as `bg-[var(--red)]`, `text-[var(--muted)]`, `border-[var(--line)]`.
+- Keep arbitrary values for grid ratios, exact colors, gradients, shadows, and any spacing or type size that must match the original deck.

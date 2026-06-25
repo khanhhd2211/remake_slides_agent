@@ -5,95 +5,100 @@
 @source "../courses/**/*.mdx";
 @source "../template/**/*.md";
 @source "../components/**/*.md";
+@source "../components/**/*.mdx";
 
 @import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap");
-@import "../components/deck-logo.css";
-@import "../components/cover.css";
-@import "../components/content.css";
 
-:root {
-  --ink: #17233b;
-  --navy: #13284b;
-  --blue: #2f66b3;
-  --red: #bd2d2d;
-  --gold: #c79535;
-  --green: #2d6654;
-  --paper: #f7f1e8;
-  --cream: #fffaf1;
-  --line: rgba(23, 35, 59, 0.14);
-  --muted: #596579;
-}
+@layer base {
+  :root {
+    --ink: #17233b;
+    --navy: #13284b;
+    --blue: #2f66b3;
+    --red: #bd2d2d;
+    --gold: #c79535;
+    --green: #2d6654;
+    --paper: #f7f1e8;
+    --cream: #fffaf1;
+    --line: rgba(23, 35, 59, 0.14);
+    --muted: #596579;
+  }
 
-section {
-  width: 1280px;
-  height: 720px;
-  box-sizing: border-box;
-  padding: 54px 74px 48px;
-  overflow: hidden;
-  color: var(--ink);
-  font-family: "Be Vietnam Pro", Arial, sans-serif;
-  background:
-    radial-gradient(circle at 90% 8%, rgba(47, 102, 179, 0.09), transparent 28%),
-    linear-gradient(135deg, var(--cream), var(--paper));
-}
+  section {
+    width: 1280px;
+    height: 720px;
+    box-sizing: border-box;
+    padding: 54px 74px 48px;
+    overflow: hidden;
+    color: var(--ink);
+    font-family: "Be Vietnam Pro", Arial, sans-serif;
+    background:
+      radial-gradient(
+        circle at 90% 8%,
+        rgba(47, 102, 179, 0.09),
+        transparent 28%
+      ),
+      linear-gradient(135deg, var(--cream), var(--paper));
+  }
 
-section[data-marpit-pagination]::after {
-  width: auto !important;
-  height: auto !important;
-  padding: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  color: rgba(23, 35, 59, 0.38) !important;
-  font-family: "Be Vietnam Pro", Arial, sans-serif !important;
-  font-size: 18px !important;
-  font-weight: 700 !important;
-}
+  section[data-marpit-pagination]::after {
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: rgba(23, 35, 59, 0.38) !important;
+    font-family: "Be Vietnam Pro", Arial, sans-serif !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+  }
 
-h1,
-h2,
-h3,
-p {
-  margin: 0;
-}
+  h1,
+  h2,
+  h3,
+  p {
+    margin: 0;
+    padding: 0;
+  }
 
-h1 {
-  color: var(--navy);
-  font-size: 56px;
-  font-weight: 900;
-  line-height: 1.08;
-}
+  h1 {
+    color: var(--navy);
+    font-size: 56px;
+    @apply font-extrabold;
+    line-height: 1.08;
+  }
 
-h2 {
-  color: var(--navy);
-  font-size: 34px;
-  font-weight: 850;
-  line-height: 1.14;
-}
+  h2 {
+    color: var(--navy);
+    font-size: 34px;
+    @apply font-extrabold;
+    line-height: 1.14;
+  }
 
-h3 {
-  color: var(--navy);
-  font-size: 22px;
-  font-weight: 850;
-  line-height: 1.22;
-}
+  h3 {
+    @apply font-extrabold;
+    color: var(--navy);
+    font-size: 22px;
+    line-height: 1.22;
+  }
 
-p,
-li {
-  color: #465269;
-  font-size: 23px;
-  line-height: 1.45;
-}
+  p,
+  li {
+    font-size: 23px;
+    line-height: 1.45;
+  }
 
-strong {
-  color: var(--red);
-}
+  strong {
+    color: var(--red);
+  }
 
-ul {
-  margin: 0;
-  padding-left: 0;
-  list-style: none;
-}
+  ul {
+    margin: 0;
+    padding-left: 0 !important;
+    list-style: none;
+  }
 
-li {
-  margin: 0;
+  li {
+    margin: 0;
+    padding-left: 0;
+  }
 }

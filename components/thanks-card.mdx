@@ -1,0 +1,23 @@
+<div
+  className="absolute inset-0 bg-[image:linear-gradient(rgba(19,40,75,0.77),rgba(19,40,75,0.77)),var(--thanks-image,linear-gradient(135deg,#13284b,#13284b))] bg-cover bg-center"
+  style={{
+    "--thanks-image": `url('${props.background || "../assets/classroom-discussion.jpg"}')`,
+  }}
+></div>
+<img
+  className="absolute left-[44px] top-[32px] z-10 h-[84px] w-[84px] object-contain opacity-70"
+  src={props.logoSrc || "../assets/logo.png"}
+  alt={props.logoAlt || "Logo trường"}
+/>
+<div className="relative z-10 mx-auto max-w-[2000px] text-center text-[#fffaf1]">
+  <div className="uppercase text-3xl font-extrabold text-[#fffaf1] drop-shadow-[0_5px_24px_rgba(0,0,0,0.3)]">
+    {props.title || "Xin trân trọng cám ơn"}
+  </div>
+  <div className="mt-8 grid gap-2 text-sm font-semibold leading-[1.5] text-[#fffaf1]/90">
+    <div>{props.school}</div>
+    {props.address && <div>Địa chỉ: {props.address}</div>}
+    {props.hotline && <div>Hotline: {props.hotline}</div>}
+    {props.email && <div>Email: {props.email}</div>}
+    {props.website && <div>Website: {props.website}</div>}
+  </div>
+</div>

@@ -2,9 +2,29 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Marp: dev",
+      "dependsOn": [
+        "Marp: watch MDX render cache",
+        "Marp: watch Tailwind theme"
+      ],
+      "dependsOrder": "parallel",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Marp: preview",
       "type": "shell",
       "command": "npm run preview",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Marp: watch MDX render cache",
+      "type": "shell",
+      "command": "npm run watch:mdx",
       "isBackground": true,
       "problemMatcher": []
     },

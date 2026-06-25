@@ -1,0 +1,21 @@
+<DeckLogo
+  src={props.logoSrc || "../assets/logo.png"}
+  alt={props.logoAlt || "Logo trường"}
+  position="top-left"
+/>
+<div
+  className="absolute inset-[-18px] scale-[1.04] bg-[image:linear-gradient(rgba(20,14,9,0.58),rgba(20,14,9,0.58)),var(--cover-image,linear-gradient(135deg,#13284b,#bd2d2d))] bg-cover bg-center blur-[6px] saturate-75 brightness-75"
+  style={{
+    "--cover-image": `url('${props.background || "../assets/vietnam-national-assembly.jpg"}')`,
+  }}
+></div>
+<div className="relative text-center text-[78px] font-extrabold uppercase leading-[1.2] text-[#fff8eb] drop-shadow-[0_6px_28px_rgba(0,0,0,0.48)]">
+  <span className="absolute left-1/2 top-[-64px] inline-block -translate-x-1/2 rounded-full border border-[#fff7e8]/70 px-3 py-[9px] text-xs font-bold leading-none tracking-[0.18em] text-[#fff7e8]/90">
+    {props.lesson}
+  </span>
+  <span>{props.title}</span>
+</div>
+<div className="absolute bottom-[58px] left-[74px] right-[74px] flex justify-between gap-6 text-[17px] font-bold text-[#fff8eb]/90 opacity-75 drop-shadow-[0_2px_12px_rgba(0,0,0,0.36)]">
+  <span className="uppercase tracking-[0.08em]">{props.school}</span>
+  <span>{props.website}</span>
+</div>

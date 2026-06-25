@@ -32,7 +32,9 @@ Common commands:
 
 ## Coding Style & Naming Conventions
 
-Use CommonJS for Node scripts, matching `engine.js` and `tools/*.js`; use ESM for MDX tooling. Prefer `const`, double quotes, 2-space indentation, and explicit `path.join` or `Path` handling for repository paths. Python scripts should use standard-library-first code, type hints where useful, `argparse` for CLIs, and `snake_case` names. Name courses with lowercase snake case, for example `giao_duc_phap_luat`, and lesson files as `bai_XX.mdx` or `bai_XX.pptx`.
+Use CommonJS for legacy Node scripts and ESM for MDX tooling. Prefer `const`, double quotes, 2-space indentation, and explicit `path.join` or `Path` handling for repository paths. Python scripts should use standard-library-first code, type hints where useful, `argparse` for CLIs, and `snake_case` names. Name courses with lowercase snake case, for example `giao_duc_phap_luat`, and lesson files as `bai_XX.mdx` or `bai_XX.pptx`.
+
+Slide sizing is tuned visually, so arbitrary Tailwind values are allowed when they preserve the deck layout. Prefer explicit values such as `h-[430px]`, `gap-[52px]`, `px-[18px]`, and `text-[20px]` over nearby scale aliases if the alias changes the rendered size. Tailwind IntelliSense canonical warnings are acceptable in slide and component MDX files. Use shared CSS variables where helpful, for example `bg-[var(--red)]`, `text-[var(--muted)]`, and `border-[var(--line)]`.
 
 ## Testing Guidelines
 
@@ -44,4 +46,4 @@ This repository currently has no commit history, so no project-specific commit c
 
 ## Agent-Specific Instructions
 
-Keep generated artifacts separate from source edits when possible. Do not overwrite original files in any `courses/<course_id>/source-ppt/` directory. When changing slide styling, edit `template/theme.source.css` and regenerate `template/theme.css` with `npm run build:css`.
+Keep generated artifacts separate from source edits when possible. Do not overwrite original files in any `courses/<course_id>/source-ppt/` directory. Keep `template/theme.source.css` focused on shared tokens, typography, and base Marp styling. Put reusable UI in `components/*.mdx`, and put per-slide layout directly in the course `.mdx` deck with Tailwind classes. Regenerate `template/theme.css` with `npm run build:css` after theme changes.
