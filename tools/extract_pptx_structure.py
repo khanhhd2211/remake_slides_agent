@@ -5,160 +5,33 @@ Usage:
     tools/extract_pptx_structure.py courses/giao_duc_phap_luat/source-ppt/bai_01.pptx
     tools/extract_pptx_structure.py courses/giao_duc_phap_luat/source-ppt/bai_01.pptx --out courses/giao_duc_phap_luat/output/bai_01.yaml
 
-The script uses only Python's standard library for PPTX parsing. Slide
-screenshots are rendered with LibreOffice (`soffice`) and Poppler (`pdftoppm`),
-with a LibreOffice-only fallback for environments where Poppler is broken.
+PPTX structure is read with python-pptx. Slide screenshots are rendered by
+converting the full PPTX to a temporary PDF with LibreOffice (`soffice`), then
+rasterizing that PDF with Poppler (`pdftoppm`).
 """
 
 from __future__ import annotations
 
 import argparse
-import os
-import re
 import shutil
 import subprocess
 import sys
 import tempfile
-import zipfile
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-from xml.etree import ElementTree as ET
+
+try:
+    from pptx import Presentation
+    from pptx.enum.shapes import MSO_SHAPE_TYPE
+except ImportError as exc:  # pragma: no cover - exercised by CLI environment.
+    raise SystemExit(
+        "Missing dependency: python-pptx. Activate your environment first, "
+        "for example: `conda activate ds`."
+    ) from exc
 
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_ROOT = ROOT / "pptx-analysis"
-
-NS = {
-    "a": "http://schemas.openxmlformats.org/drawingml/2006/main",
-    "p": "http://schemas.openxmlformats.org/presentationml/2006/main",
-    "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
-    "rel": "http://schemas.openxmlformats.org/package/2006/relationships",
-}
-
-
-@dataclass(frozen=True)
-class Relationship:
-    rel_type: str
-    target: str
-    target_mode: str | None
-
-
-@dataclass(frozen=True)
-class SlideRef:
-    rel_id: str | None
-    part: str
-
-
-def qn(namespace: str, tag: str) -> str:
-    return f"{{{NS[namespace]}}}{tag}"
-
-
-def natural_key(path: str) -> tuple[int, str]:
-    match = re.search(r"slide(\d+)\.xml$", path)
-    if match:
-        return (int(match.group(1)), path)
-    return (10**9, path)
-
-
-def local_name(tag: str) -> str:
-    return tag.rsplit("}", 1)[-1]
-
-
-def read_xml(zf: zipfile.ZipFile, name: str) -> ET.Element:
-    return ET.fromstring(zf.read(name))
-
-
-def read_relationships(zf: zipfile.ZipFile, rels_path: str) -> dict[str, Relationship]:
-    if rels_path not in zf.namelist():
-        return {}
-    root = read_xml(zf, rels_path)
-    rels: dict[str, Relationship] = {}
-    for rel in root.findall("rel:Relationship", NS):
-        rel_id = rel.attrib.get("Id")
-        if not rel_id:
-            continue
-        rels[rel_id] = Relationship(
-            rel_type=rel.attrib.get("Type", ""),
-            target=rel.attrib.get("Target", ""),
-            target_mode=rel.attrib.get("TargetMode"),
-        )
-    return rels
-
-
-def normalize_part_path(base_part: str, target: str) -> str:
-    if target.startswith("/"):
-        return target.lstrip("/")
-    base_dir = Path(base_part).parent
-    return os.path.normpath(str(base_dir / target)).replace("\\", "/")
-
-
-def get_ordered_slide_refs(zf: zipfile.ZipFile) -> list[SlideRef]:
-    names = set(zf.namelist())
-    presentation_path = "ppt/presentation.xml"
-    presentation_rels_path = "ppt/_rels/presentation.xml.rels"
-    if presentation_path not in names or presentation_rels_path not in names:
-        return [
-            SlideRef(rel_id=None, part=n)
-            for n in sorted(
-            [n for n in names if n.startswith("ppt/slides/slide") and n.endswith(".xml")],
-            key=natural_key,
-            )
-        ]
-
-    presentation = read_xml(zf, presentation_path)
-    rels = read_relationships(zf, presentation_rels_path)
-    ordered: list[SlideRef] = []
-    for slide_id in presentation.findall(".//p:sldIdLst/p:sldId", NS):
-        rel_id = slide_id.attrib.get(qn("r", "id"))
-        if not rel_id or rel_id not in rels:
-            continue
-        ordered.append(SlideRef(rel_id=rel_id, part=normalize_part_path(presentation_path, rels[rel_id].target)))
-    return ordered
-
-
-def get_ordered_slide_parts(zf: zipfile.ZipFile) -> list[str]:
-    return [ref.part for ref in get_ordered_slide_refs(zf)]
-
-
-def extract_shape_name(node: ET.Element) -> str | None:
-    c_nv_pr = node.find(".//p:cNvPr", NS)
-    if c_nv_pr is None:
-        return None
-    return c_nv_pr.attrib.get("name")
-
-
-def extract_position(node: ET.Element) -> dict[str, int] | None:
-    xfrm = node.find(".//a:xfrm", NS)
-    if xfrm is None:
-        return None
-    off = xfrm.find("a:off", NS)
-    ext = xfrm.find("a:ext", NS)
-    data: dict[str, int] = {}
-    if off is not None:
-        data["x"] = int(off.attrib.get("x", "0"))
-        data["y"] = int(off.attrib.get("y", "0"))
-    if ext is not None:
-        data["cx"] = int(ext.attrib.get("cx", "0"))
-        data["cy"] = int(ext.attrib.get("cy", "0"))
-    return data or None
-
-
-def read_order_key(node: ET.Element) -> tuple[int, int]:
-    position = extract_position(node) or {}
-    return (position.get("y", 0), position.get("x", 0))
-
-
-def run_font_size(run: ET.Element) -> float | None:
-    r_pr = run.find("a:rPr", NS)
-    if r_pr is None or "sz" not in r_pr.attrib:
-        return None
-    return int(r_pr.attrib["sz"]) / 100
-
-
-def run_is_bold(run: ET.Element) -> bool:
-    r_pr = run.find("a:rPr", NS)
-    return r_pr is not None and r_pr.attrib.get("b") == "1"
 
 
 def markdown_text(text: str, bold: bool) -> str:
@@ -204,33 +77,62 @@ def clean_text_block(lines: list[str]) -> str:
     return "\n".join(cleaned)
 
 
-def extract_text_blocks(slide_root: ET.Element) -> list[dict[str, Any]]:
+def shape_order_key(shape: Any) -> tuple[int, int]:
+    return (int(getattr(shape, "top", 0) or 0), int(getattr(shape, "left", 0) or 0))
+
+
+def iter_shapes(shapes: Any) -> Any:
+    for shape in shapes:
+        if shape.shape_type == MSO_SHAPE_TYPE.GROUP:
+            yield from iter_shapes(shape.shapes)
+        else:
+            yield shape
+
+
+def extract_text_frame_lines(text_frame: Any) -> tuple[list[str], list[float]]:
+    lines: list[str] = []
+    font_sizes: list[float] = []
+    for paragraph in text_frame.paragraphs:
+        segments: list[tuple[str, bool]] = []
+        for run in paragraph.runs:
+            text = run.text or ""
+            font = run.font
+            if font.size is not None:
+                font_sizes.append(font.size.pt)
+            segments.append((text, bool(font.bold)))
+        line = "".join(markdown_text(text, bold) for text, bold in merge_segments(segments))
+        if line.strip():
+            lines.append(line)
+    return lines, font_sizes
+
+
+def extract_table_lines(shape: Any) -> tuple[list[str], list[float]]:
+    lines: list[str] = []
+    font_sizes: list[float] = []
+    if not getattr(shape, "has_table", False):
+        return lines, font_sizes
+
+    for row in shape.table.rows:
+        cells: list[str] = []
+        for cell in row.cells:
+            cell_lines, cell_font_sizes = extract_text_frame_lines(cell.text_frame)
+            font_sizes.extend(cell_font_sizes)
+            cells.append(" ".join(line.strip() for line in cell_lines if line.strip()))
+        row_text = " | ".join(cell for cell in cells if cell)
+        if row_text:
+            lines.append(row_text)
+    return lines, font_sizes
+
+
+def extract_text_blocks(slide: Any) -> list[dict[str, Any]]:
     raw_blocks: list[tuple[tuple[int, int], dict[str, Any]]] = []
-    text_shapes = slide_root.findall(".//p:sp", NS) + slide_root.findall(".//p:graphicFrame", NS)
-    for shape in text_shapes:
+    for shape in iter_shapes(slide.shapes):
         lines: list[str] = []
         font_sizes: list[float] = []
-        for paragraph in shape.findall(".//a:p", NS):
-            segments: list[tuple[str, bool]] = []
-
-            for child in paragraph:
-                if local_name(child.tag) == "br":
-                    segments.append(("\n", False))
-                    continue
-                if local_name(child.tag) != "r":
-                    continue
-                text_node = child.find("a:t", NS)
-                if text_node is None:
-                    continue
-                text = text_node.text or ""
-                font_size = run_font_size(child)
-                if font_size is not None:
-                    font_sizes.append(font_size)
-                segments.append((text, run_is_bold(child)))
-
-            line = "".join(markdown_text(text, bold) for text, bold in merge_segments(segments))
-            if line.strip():
-                lines.append(line)
+        if getattr(shape, "has_text_frame", False):
+            lines, font_sizes = extract_text_frame_lines(shape.text_frame)
+        elif getattr(shape, "has_table", False):
+            lines, font_sizes = extract_table_lines(shape)
 
         if lines:
             text = clean_text_block(lines)
@@ -240,7 +142,7 @@ def extract_text_blocks(slide_root: ET.Element) -> list[dict[str, Any]]:
                 "font_size_pt": most_common_font_size(font_sizes),
                 "text": text,
             }
-            raw_blocks.append((read_order_key(shape), block))
+            raw_blocks.append((shape_order_key(shape), block))
 
     blocks = [block for _, block in sorted(raw_blocks, key=lambda item: item[0])]
     for index, block in enumerate(blocks, start=1):
@@ -253,50 +155,28 @@ def extract_text_blocks(slide_root: ET.Element) -> list[dict[str, Any]]:
     return blocks
 
 
-def target_filename(target: str) -> str:
-    return Path(target.split("#", 1)[0].split("?", 1)[0]).name
-
-
-def extract_images(
-    zf: zipfile.ZipFile,
-    slide_part: str,
-    slide_root: ET.Element,
-    slide_rels: dict[str, Relationship],
-    image_dir: Path,
-    slide_number: int,
-) -> list[dict[str, Any]]:
+def extract_images(slide: Any, image_dir: Path, slide_number: int) -> list[dict[str, Any]]:
     raw_images: list[tuple[tuple[int, int], dict[str, Any]]] = []
-    seen: set[str] = set()
+    pic_index = 0
 
-    for pic_index, pic in enumerate(slide_root.findall(".//p:pic", NS), start=1):
-        blip = pic.find(".//a:blip", NS)
-        if blip is None:
+    for shape in iter_shapes(slide.shapes):
+        if shape.shape_type != MSO_SHAPE_TYPE.PICTURE:
             continue
-        rel_id = blip.attrib.get(qn("r", "embed")) or blip.attrib.get(qn("r", "link"))
-        if not rel_id or rel_id not in slide_rels:
-            continue
-        rel = slide_rels[rel_id]
-        if rel.target_mode == "External":
-            continue
-
-        media_part = normalize_part_path(slide_part, rel.target)
-        if media_part not in zf.namelist():
-            continue
-        source_name = target_filename(media_part)
-        suffix = Path(source_name).suffix or ".bin"
+        pic_index += 1
+        image = shape.image
+        blob = image.blob
+        suffix = image_suffix(shape, blob)
         out_name = f"slide_{slide_number:03d}_image_{pic_index:02d}{suffix}"
         out_path = image_dir / out_name
-        if media_part not in seen:
-            out_path.write_bytes(zf.read(media_part))
-            seen.add(media_part)
+        out_path.write_bytes(blob)
         image_data: dict[str, Any] = {
             "file": relpath_for_yaml(out_path, image_dir.parent),
         }
-        size = image_size(out_path)
+        size = image_size(blob)
         if size:
             image_data["width_px"] = size[0]
             image_data["height_px"] = size[1]
-        raw_images.append((read_order_key(pic), image_data))
+        raw_images.append((shape_order_key(shape), image_data))
 
     images = [image for _, image in sorted(raw_images, key=lambda item: item[0])]
     for index, image in enumerate(images, start=1):
@@ -310,10 +190,67 @@ def extract_images(
     return images
 
 
-def image_size(path: Path) -> tuple[int, int] | None:
-    data = path.read_bytes()
+def image_suffix(shape: Any, data: bytes) -> str:
+    suffix = image_suffix_from_bytes(data)
+    if suffix:
+        return suffix
+
+    part = image_part(shape)
+    if part is not None:
+        partname = getattr(part, "partname", None)
+        if partname is not None:
+            suffix = Path(str(partname)).suffix
+            if suffix:
+                return suffix
+
+        content_type = getattr(part, "content_type", "")
+        suffix = {
+            "image/bmp": ".bmp",
+            "image/gif": ".gif",
+            "image/jpeg": ".jpg",
+            "image/png": ".png",
+            "image/tiff": ".tiff",
+            "image/x-emf": ".emf",
+            "image/x-wmf": ".wmf",
+            "image/svg+xml": ".svg",
+        }.get(content_type)
+        if suffix:
+            return suffix
+
+    return ".bin"
+
+
+def image_part(shape: Any) -> Any | None:
+    try:
+        rel_id = shape._element.blip_rId
+        return shape.part.related_part(rel_id)
+    except Exception:
+        return None
+
+
+def image_suffix_from_bytes(data: bytes) -> str | None:
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return ".png"
+    if data.startswith(b"\xff\xd8"):
+        return ".jpg"
+    if data.startswith(b"GIF87a") or data.startswith(b"GIF89a"):
+        return ".gif"
+    if data.startswith(b"BM"):
+        return ".bmp"
+    if data.startswith(b"II*\x00") or data.startswith(b"MM\x00*"):
+        return ".tiff"
+    if data.startswith(b"\x01\x00\x00\x00"):
+        return ".emf"
+    if data.startswith(b"\xd7\xcd\xc6\x9a"):
+        return ".wmf"
+    return None
+
+
+def image_size(data: bytes) -> tuple[int, int] | None:
     if data.startswith(b"\x89PNG\r\n\x1a\n") and len(data) >= 24:
         return (int.from_bytes(data[16:20], "big"), int.from_bytes(data[20:24], "big"))
+    if (data.startswith(b"GIF87a") or data.startswith(b"GIF89a")) and len(data) >= 10:
+        return (int.from_bytes(data[6:8], "little"), int.from_bytes(data[8:10], "little"))
     if data.startswith(b"\xff\xd8"):
         index = 2
         while index + 9 < len(data):
@@ -335,110 +272,141 @@ def image_size(path: Path) -> tuple[int, int] | None:
     return None
 
 
-def render_slide_screenshots(pptx_path: Path, screenshot_dir: Path) -> list[Path]:
-    soffice = shutil.which("soffice") or shutil.which("libreoffice")
-    pdftoppm = shutil.which("pdftoppm")
-    if not soffice:
-        raise RuntimeError("Cannot render screenshots: `soffice` or `libreoffice` was not found.")
-    if not pdftoppm:
-        return render_screenshots_with_single_slide_exports(pptx_path, screenshot_dir, soffice)
-
-    screenshot_dir.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix="pptx-render-") as tmp:
-        tmp_path = Path(tmp)
-        profile_dir = tmp_path / "lo-profile"
-        pdf_dir = tmp_path / "pdf"
-        pdf_dir.mkdir()
-        cmd = [
-            soffice,
-            f"-env:UserInstallation=file://{profile_dir}",
-            "--headless",
-            "--convert-to",
-            "pdf",
-            "--outdir",
-            str(pdf_dir),
-            str(pptx_path),
-        ]
-        subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        pdfs = sorted(pdf_dir.glob("*.pdf"))
-        if not pdfs:
-            raise RuntimeError("LibreOffice did not produce a PDF for screenshot rendering.")
-
-        prefix = screenshot_dir / "slide"
-        cmd = [pdftoppm, "-png", "-r", "144", str(pdfs[0]), str(prefix)]
-        try:
-            subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        except subprocess.CalledProcessError:
-            return render_screenshots_with_single_slide_exports(pptx_path, screenshot_dir, soffice)
-
-    rendered = sorted(screenshot_dir.glob("slide-*.png"))
-    for index, path in enumerate(rendered, start=1):
-        normalized = screenshot_dir / f"slide_{index:03d}.png"
-        if path != normalized:
-            path.replace(normalized)
-    return sorted(screenshot_dir.glob("slide_*.png"))
+def cleanup_previous_screenshots(screenshot_dir: Path) -> None:
+    for pattern in ("slide_*.png", "slide_*.jpg", "slide-*.png", "slide-*.jpg"):
+        for path in screenshot_dir.glob(pattern):
+            path.unlink()
 
 
-def single_slide_pptx(source_pptx: Path, dest_pptx: Path, keep_rel_id: str) -> None:
-    with zipfile.ZipFile(source_pptx) as zin:
-        presentation = read_xml(zin, "ppt/presentation.xml")
-        slide_id_list = presentation.find("p:sldIdLst", NS)
-        if slide_id_list is None:
-            raise RuntimeError("Cannot find ppt/presentation.xml slide list.")
-        for slide_id in list(slide_id_list):
-            if slide_id.attrib.get(qn("r", "id")) != keep_rel_id:
-                slide_id_list.remove(slide_id)
-
-        with zipfile.ZipFile(dest_pptx, "w", compression=zipfile.ZIP_DEFLATED) as zout:
-            for info in zin.infolist():
-                data = zin.read(info.filename)
-                if info.filename == "ppt/presentation.xml":
-                    data = ET.tostring(presentation, encoding="utf-8", xml_declaration=True)
-                zout.writestr(info, data)
-
-
-def render_screenshots_with_single_slide_exports(
+def render_slide_screenshots(
     pptx_path: Path,
     screenshot_dir: Path,
-    soffice: str,
+    dpi: int,
+    image_format: str,
 ) -> list[Path]:
-    screenshot_dir.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(pptx_path) as zf:
-        slide_refs = get_ordered_slide_refs(zf)
-    if any(ref.rel_id is None for ref in slide_refs):
-        raise RuntimeError("Cannot render screenshots without presentation slide relationship IDs.")
+    soffice = shutil.which("soffice") or shutil.which("libreoffice")
+    if not soffice:
+        raise RuntimeError("Cannot render screenshots: `soffice` or `libreoffice` was not found.")
 
-    rendered: list[Path] = []
-    with tempfile.TemporaryDirectory(prefix="pptx-render-single-") as tmp:
+    screenshot_dir.mkdir(parents=True, exist_ok=True)
+    cleanup_previous_screenshots(screenshot_dir)
+    with tempfile.TemporaryDirectory(prefix="pptx-render-") as tmp:
         tmp_path = Path(tmp)
-        profile_dir = tmp_path / "lo-profile"
-        exports_dir = tmp_path / "exports"
-        exports_dir.mkdir()
-        for index, slide_ref in enumerate(slide_refs, start=1):
-            one_slide = tmp_path / f"slide_{index:03d}.pptx"
-            assert slide_ref.rel_id is not None
-            single_slide_pptx(pptx_path, one_slide, slide_ref.rel_id)
-            cmd = [
-                soffice,
-                f"-env:UserInstallation=file://{profile_dir}",
-                "--headless",
-                "--convert-to",
-                "png",
-                "--outdir",
-                str(exports_dir),
-                str(one_slide),
-            ]
-            subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            exported = exports_dir / f"slide_{index:03d}.png"
-            if not exported.exists():
-                candidates = sorted(exports_dir.glob("*.png"))
-                if not candidates:
-                    raise RuntimeError(f"LibreOffice did not render slide {index} to PNG.")
-                exported = candidates[-1]
-            final = screenshot_dir / f"slide_{index:03d}.png"
-            shutil.move(str(exported), final)
-            rendered.append(final)
-    return rendered
+        pdf_path = convert_pptx_to_pdf(pptx_path, tmp_path, soffice)
+        render_pdf_pages(pdf_path, screenshot_dir, dpi, image_format)
+
+    suffix = "jpg" if image_format == "jpg" else "png"
+    rendered = sorted(screenshot_dir.glob(f"slide-*.{suffix}"))
+    for index, path in enumerate(rendered, start=1):
+        normalized = screenshot_dir / f"slide_{index:03d}.{suffix}"
+        if path != normalized:
+            path.replace(normalized)
+    return sorted(screenshot_dir.glob(f"slide_*.{suffix}"))
+
+
+def convert_pptx_to_pdf(pptx_path: Path, tmp_path: Path, soffice: str) -> Path:
+    profile_dir = tmp_path / "lo-profile"
+    pdf_dir = tmp_path / "pdf"
+    pdf_dir.mkdir()
+    cmd = [
+        soffice,
+        f"-env:UserInstallation=file://{profile_dir}",
+        "--headless",
+        "--convert-to",
+        "pdf",
+        "--outdir",
+        str(pdf_dir),
+        str(pptx_path),
+    ]
+    subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    pdfs = sorted(pdf_dir.glob("*.pdf"))
+    if not pdfs:
+        raise RuntimeError("LibreOffice did not produce a PDF for screenshot rendering.")
+    return pdfs[0]
+
+
+def render_pdf_pages(pdf_path: Path, screenshot_dir: Path, dpi: int, image_format: str) -> None:
+    errors: list[str] = []
+
+    pdftoppm = shutil.which("pdftoppm")
+    if pdftoppm:
+        try:
+            render_pdf_pages_with_pdftoppm(pdftoppm, pdf_path, screenshot_dir, dpi, image_format)
+            return
+        except subprocess.CalledProcessError as exc:
+            errors.append(command_error("pdftoppm", exc))
+
+    gs = shutil.which("gs")
+    if gs:
+        try:
+            render_pdf_pages_with_ghostscript(gs, pdf_path, screenshot_dir, dpi, image_format)
+            return
+        except subprocess.CalledProcessError as exc:
+            errors.append(command_error("gs", exc))
+
+    if not errors:
+        raise RuntimeError("Cannot render screenshots: neither `pdftoppm` nor `gs` was found.")
+    raise RuntimeError("Cannot render PDF screenshots. " + " | ".join(errors))
+
+
+def render_pdf_pages_with_pdftoppm(
+    pdftoppm: str,
+    pdf_path: Path,
+    screenshot_dir: Path,
+    dpi: int,
+    image_format: str,
+) -> None:
+    prefix = screenshot_dir / "slide"
+    if image_format == "jpg":
+        cmd = [
+            pdftoppm,
+            "-jpeg",
+            "-jpegopt",
+            "quality=85,progressive=y,optimize=y",
+            "-r",
+            str(dpi),
+            str(pdf_path),
+            str(prefix),
+        ]
+    else:
+        cmd = [pdftoppm, "-png", "-r", str(dpi), str(pdf_path), str(prefix)]
+    subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+
+def render_pdf_pages_with_ghostscript(
+    gs: str,
+    pdf_path: Path,
+    screenshot_dir: Path,
+    dpi: int,
+    image_format: str,
+) -> None:
+    if image_format == "jpg":
+        device = "jpeg"
+        output = screenshot_dir / "slide-%03d.jpg"
+        quality_args = ["-dJPEGQ=85"]
+    else:
+        device = "png16m"
+        output = screenshot_dir / "slide-%03d.png"
+        quality_args = []
+
+    cmd = [
+        gs,
+        "-dSAFER",
+        "-dBATCH",
+        "-dNOPAUSE",
+        f"-sDEVICE={device}",
+        f"-r{dpi}",
+        *quality_args,
+        f"-sOutputFile={output}",
+        str(pdf_path),
+    ]
+    subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+
+def command_error(tool: str, exc: subprocess.CalledProcessError) -> str:
+    stderr = (exc.stderr or "").strip().splitlines()
+    detail = stderr[-1] if stderr else str(exc)
+    return f"{tool} failed: {detail}"
 
 
 def yaml_scalar(value: str) -> str:
@@ -508,7 +476,13 @@ def dot_relpath_for_yaml(path: Path, base_dir: Path) -> str:
     return f"./{relpath_for_yaml(path, base_dir)}"
 
 
-def analyze_pptx(pptx_path: Path, output_yaml: Path, render_screenshots: bool) -> dict[str, Any]:
+def analyze_pptx(
+    pptx_path: Path,
+    output_yaml: Path,
+    render_screenshots: bool,
+    screenshot_dpi: int,
+    screenshot_format: str,
+) -> dict[str, Any]:
     out_dir = output_yaml.parent
     image_dir = out_dir / "images"
     screenshot_dir = out_dir / "screenshots"
@@ -519,38 +493,33 @@ def analyze_pptx(pptx_path: Path, output_yaml: Path, render_screenshots: bool) -
     screenshot_error: str | None = None
     if render_screenshots:
         try:
-            screenshots = render_slide_screenshots(pptx_path, screenshot_dir)
+            screenshots = render_slide_screenshots(
+                pptx_path=pptx_path,
+                screenshot_dir=screenshot_dir,
+                dpi=screenshot_dpi,
+                image_format=screenshot_format,
+            )
         except Exception as exc:  # Keep extraction useful even without renderer.
             screenshot_error = str(exc)
 
     slides: list[dict[str, Any]] = []
-    with zipfile.ZipFile(pptx_path) as zf:
-        slide_parts = get_ordered_slide_parts(zf)
-        for slide_number, slide_part in enumerate(slide_parts, start=1):
-            slide_root = read_xml(zf, slide_part)
-            rels_path = (
-                str(Path(slide_part).parent / "_rels" / f"{Path(slide_part).name}.rels")
-                .replace("\\", "/")
-            )
-            slide_rels = read_relationships(zf, rels_path)
-            screenshot_file = None
-            if slide_number <= len(screenshots):
-                screenshot_file = dot_relpath_for_yaml(screenshots[slide_number - 1], out_dir)
+    presentation = Presentation(str(pptx_path))
+    for slide_number, slide in enumerate(presentation.slides, start=1):
+        screenshot_file = None
+        if slide_number <= len(screenshots):
+            screenshot_file = dot_relpath_for_yaml(screenshots[slide_number - 1], out_dir)
 
-            slide_data: dict[str, Any] = {
-                "number": slide_number,
-                "screenshot": screenshot_file,
-                "texts": extract_text_blocks(slide_root),
-                "images": extract_images(
-                    zf=zf,
-                    slide_part=slide_part,
-                    slide_root=slide_root,
-                    slide_rels=slide_rels,
-                    image_dir=image_dir,
-                    slide_number=slide_number,
-                ),
-            }
-            slides.append(slide_data)
+        slide_data: dict[str, Any] = {
+            "number": slide_number,
+            "screenshot": screenshot_file,
+            "texts": extract_text_blocks(slide),
+            "images": extract_images(
+                slide=slide,
+                image_dir=image_dir,
+                slide_number=slide_number,
+            ),
+        }
+        slides.append(slide_data)
 
     result: dict[str, Any] = {
         "slide_count": len(slides),
@@ -586,7 +555,19 @@ def main() -> int:
     parser.add_argument(
         "--no-screenshots",
         action="store_true",
-        help="Skip LibreOffice/Poppler screenshot rendering.",
+        help="Skip LibreOffice PDF conversion and Poppler screenshot rendering.",
+    )
+    parser.add_argument(
+        "--screenshot-dpi",
+        type=int,
+        default=120,
+        help="Rasterization DPI for slide screenshots after PDF conversion. Default: 120.",
+    )
+    parser.add_argument(
+        "--screenshot-format",
+        choices=("jpg", "png"),
+        default="jpg",
+        help="Screenshot image format after PDF conversion. Default: jpg for smaller files.",
     )
     args = parser.parse_args()
 
@@ -597,6 +578,9 @@ def main() -> int:
     if pptx_path.suffix.lower() != ".pptx":
         print(f"Expected a .pptx file: {pptx_path}", file=sys.stderr)
         return 1
+    if args.screenshot_dpi < 36:
+        print("--screenshot-dpi must be at least 36.", file=sys.stderr)
+        return 1
 
     output_yaml = (args.out.resolve() if args.out else default_output_yaml(pptx_path).resolve())
     output_yaml.parent.mkdir(parents=True, exist_ok=True)
@@ -605,6 +589,8 @@ def main() -> int:
         pptx_path=pptx_path,
         output_yaml=output_yaml,
         render_screenshots=not args.no_screenshots,
+        screenshot_dpi=args.screenshot_dpi,
+        screenshot_format=args.screenshot_format,
     )
     output_yaml.write_text(to_yaml(analysis) + "\n", encoding="utf-8")
     print(output_yaml)

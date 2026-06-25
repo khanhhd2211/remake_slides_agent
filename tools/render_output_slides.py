@@ -18,7 +18,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_COURSE = "giao_duc_phap_luat"
+DEFAULT_COURSE = "giao_duc_chinh_tri"
 DEFAULT_COURSE_ROOT = ROOT / "courses" / DEFAULT_COURSE
 DEFAULT_OUTPUT_DIR = DEFAULT_COURSE_ROOT / "output"
 DEFAULT_DEST_DIR = DEFAULT_OUTPUT_DIR / "rendered-slides"

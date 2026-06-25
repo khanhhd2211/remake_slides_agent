@@ -3,7 +3,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
-const course = process.env.COURSE || process.argv[2] || "giao_duc_phap_luat";
+const course = process.env.COURSE || process.argv[2] || "giao_duc_chinh_tri";
 const courseRoot = path.join(root, "courses", course);
 const slidesDir = path.join(courseRoot, "md_slides");
 const renderedSlidesDir = path.join(root, ".marp-cache", course, "md_slides");

@@ -16,14 +16,18 @@ function stripReactPreloads(html) {
 }
 
 function unwrapFormatterParagraphs(html) {
-  return html
-    .replace(/<(span|h[1-6])([^>]*)><p>([\s\S]*?)<\/p><\/\1>/g, "<$1$2>$3</$1>")
-    .replace(/<div([^>]*)><p>([\s\S]*?)<\/p><\/div>/g, (match, attrs, body) => {
-      if (!/\bclass="[^"]*(?:text-|font-|leading-|uppercase|lowercase)/.test(attrs)) {
-        return match;
-      }
-      return `<div${attrs}>${body}</div>`;
-    });
+  let previous;
+  let next = html;
+
+  do {
+    previous = next;
+    next = next.replace(
+      /<([a-z][\w:-]*)([^>]*)>\s*<p>((?:(?!<\/?p(?:\s|>))[\s\S])*?)<\/p>\s*<\/\1>/g,
+      "<$1$2>$3</$1>",
+    );
+  } while (next !== previous);
+
+  return next;
 }
 
 function toPascalCase(name) {
@@ -152,7 +156,7 @@ async function renderFile(input, output, components) {
 async function main() {
   const input = readArg("--input");
   const output = readArg("--output");
-  const course = readArg("--course") || process.env.COURSE || "giao_duc_phap_luat";
+  const course = readArg("--course") || process.env.COURSE || "giao_duc_chinh_tri";
   const deck = readArg("--deck") || process.env.DECK || "bai_01";
   syncCourseAssets(course);
 

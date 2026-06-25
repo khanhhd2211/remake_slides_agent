@@ -3,7 +3,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
-const course = process.env.COURSE || process.argv[2] || "giao_duc_phap_luat";
+const course = process.env.COURSE || process.argv[2] || "giao_duc_chinh_tri";
 const deck = (process.env.DECK || process.argv[3] || "bai_01").replace(/\.(mdx|md)$/, "");
 const slidesDir = path.join(root, "courses", course, "md_slides");
 const mdxInput = path.join(slidesDir, `${deck}.mdx`);

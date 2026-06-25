@@ -1,20 +1,109 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
+## Purpose
 
-This repository converts course PowerPoint decks into Marp-based slide decks and supports multiple subjects under `courses/`.
+This repository remakes course PowerPoint lessons into Marp MDX slide decks. AI agents must preserve the learning content, study the original slide design, and rebuild slides thoughtfully with reusable MDX components plus Tailwind utilities.
 
-- `courses/<course_id>/source-ppt/` stores original `.pptx` files such as `bai_01.pptx`.
-- `courses/<course_id>/md_slides/` contains editable Marp MDX decks for each subject.
-- `courses/<course_id>/assets/` holds images referenced by that subject's slides.
-- `courses/<course_id>/pptx-analysis/` stores extracted PPTX structure.
-- `courses/<course_id>/output/` stores generated decks and rendered exports.
-- `template/` contains shared slide assets for conversion: `theme.source.css`, generated `theme.css`, layout snippets, and prompt guidance.
-- `tools/` contains Node and Python utilities for theme building, previewing, PPTX analysis, rendering, and cleanup.
+## Project Structure
 
-## Build, Test, and Development Commands
+- `courses/<course_id>/source-ppt/` stores original `.pptx` files. Do not edit these files.
+- `courses/<course_id>/pptx-analysis/<deck>/` stores extracted YAML, screenshots, and embedded images.
+- `courses/<course_id>/md_slides/` contains editable Marp MDX decks such as `bai_01.mdx`.
+- `courses/<course_id>/assets/` contains final images used by the remade deck.
+- `components/*.mdx` contains reusable UI primitives such as cards, logos, quotes, and module blocks.
+- `template/theme.source.css` defines shared tokens, typography, and Marp base styles. Run `npm run build:css` after changing it.
+- `tools/` contains extraction, MDX rendering, preview, export, and cleanup scripts.
 
-Install dependencies with:
+## Required PPTX Analysis Workflow
+
+Never read or parse `.pptx` files directly from `source-ppt/`. Always create or use extracted analysis first.
+
+If `courses/<course_id>/pptx-analysis/<deck>/<deck>.yaml` is missing, run:
+
+```sh
+python3 tools/extract_pptx_structure.py courses/giao_duc_chinh_tri/source-ppt/bai_01.pptx
+```
+
+The extractor creates:
+
+- `<deck>.yaml` with slide text, image metadata, and screenshot references.
+- `screenshots/slide_001.jpg` style previews of the original slide.
+- `images/slide_001_image_01.jpg` style embedded image exports.
+
+For token efficiency, do not load the full YAML for large decks. Use:
+
+```sh
+python3 tools/slide_yaml_slice.py courses/giao_duc_chinh_tri/pptx-analysis/bai_02/bai_02.yaml --slides 1,4,7-9 --paths
+```
+
+Each YAML slide contains `number`, `screenshot`, `texts`, and `images`. Resolve screenshot and image paths relative to the YAML folder. Always inspect the `screenshot` image before remaking the slide so the visual hierarchy, spacing, and intended layout are understood.
+
+## How To Use YAML Content
+
+Use `texts` as content source, not as automatic layout instructions. Important fields:
+
+- `index` preserves approximate reading/order.
+- `font_size_pt` helps identify titles, body text, captions, and emphasis.
+- `text` may contain Markdown markers such as `**bold**` or multi-line text blocks.
+
+Use `images` only after checking relevance and quality:
+
+- `file` points to the extracted image.
+- `width_px` and `height_px` help identify logos, decorative icons, diagrams, or photos.
+- Some extracted images are meaningless artifacts, cropped decorations, or low-quality fragments.
+
+Do not insert text and images mechanically. Match each image to related text and the original screenshot. If an image does not support the slide message, omit it or replace it with a better course asset. Never insert an image without reviewing its visual quality and meaning.
+
+## MDX Slide Writing
+
+Write source slides in `courses/<course_id>/md_slides/bai_XX.mdx`. Use JSX-style attributes:
+
+```mdx
+<Card className="min-h-[200px]">
+  <h3 className="text-[var(--red)]">ĐG chuyên&nbsp;cần</h3>
+</Card>
+```
+
+Use `className`, not `class`. Self-close image tags and components when empty: `<DeckLogo />`, `<img src="../assets/logo.png" alt="Logo" />`.
+
+Use arbitrary Tailwind values when the visual match needs exact sizing, for example `text-[20px]`, `gap-[14px]`, `min-h-[248px]`, or `px-[18px]`. Do not blindly accept Tailwind IntelliSense canonical suggestions if they change the rendered size.
+
+Avoid raw Markdown list syntax inside JSX children unless a list is intended. Text like `1. Vị trí...` may become an ordered list; escape it as `1\. Vị trí...` or place it in a prop/string when needed.
+
+## Component Guidance
+
+Use existing components for repeated visual primitives: `Card`, `DeckLogo`, `Kicker`, `MediaCard`, `ModuleCard`, `PillItem`, `QuestionCard`, `QuoteBox`, `StatCard`, and `ThanksCard`.
+
+The repository already provides standard templates for the first and last slides. Use `CoverSlide` for the opening lesson information slide and `ThanksCard` for the final thank-you/contact slide. Do not recreate these two layouts manually unless the user explicitly asks for a different design.
+
+Create new `components/*.mdx` only for reusable styled elements. Avoid creating layout components such as fixed grids or fixed slide templates. Slide layout should stay flexible inside `bai_*.mdx` using Tailwind classes directly, because each original PPT slide may need a different composition.
+
+Component styles should be mostly Tailwind classes and CSS variables. Keep global CSS limited to shared tokens, type scale, Marp defaults, and small base rules.
+
+## Design Quality Rules
+
+Remake the intent, not just the objects. Before writing a slide:
+
+- View the original screenshot.
+- Read only the relevant YAML slide block.
+- Identify title, body hierarchy, supporting visuals, and decorative elements.
+- Decide what to keep, simplify, replace, or omit.
+
+Never place unrelated text next to an image. Never copy a poor extracted image just because it exists in YAML. Check that the final slide is readable, aligned, and not overflowing. If content is long, redesign with cards, columns, steps, or split slides instead of shrinking everything blindly.
+
+## Non-Negotiable Fidelity Rules
+
+The remade deck must keep the same number of slides as the source lesson unless the user explicitly approves splitting or merging slides. Every source slide must have a corresponding remade slide, and the information from each slide must not be dropped, moved to the wrong context, or changed in meaning.
+
+Do not omit required content. You may rephrase lightly for readability, add small clarifying labels, or improve visual grouping, but do not add unsupported facts, extra claims, or decorative text that changes the lesson meaning. Extra design elements are acceptable only when they support the existing content.
+
+Images must preserve their important details. Do not crop an image in a way that removes meaningful information, labels, people, diagrams, icons, or context. Prefer `object-contain`, full-image framing, or a redesigned layout over `object-cover` when the image carries content. If a crop is purely decorative, confirm that no useful information is lost.
+
+After placing each image, review the rendered slide and compare it with the original screenshot. The image must be clear enough to understand, visually related to nearby text, and not stretched, blurred, clipped, or hidden behind other elements.
+
+## Development Commands
+
+Install dependencies:
 
 ```sh
 npm install
@@ -22,28 +111,16 @@ npm install
 
 Common commands:
 
-- `npm run build:css` builds `template/theme.css` from the Tailwind source theme.
-- `npm run watch:css` rebuilds the theme when template sources change.
-- `npm run preview` starts the Marp preview server for `courses/giao_duc_phap_luat/md_slides/`.
-- `COURSE=course_a npm run preview` previews another course.
-- `COURSE=course_a DECK=bai_01 npm run html` renders MDX components, builds CSS, and exports one deck to HTML.
-- `python3 tools/render_output_slides.py --course course_a --dry-run` checks PPTX render commands.
-- `python3 tools/render_output_slides.py --course course_a --only bai_04` renders selected output decks.
+- `npm run build:css` builds `template/theme.css`.
+- `npm run watch:css` watches theme changes.
+- `npm run preview` previews the default course deck folder.
+- `COURSE=giao_duc_chinh_tri DECK=bai_01 npm run html` renders MDX components and exports HTML.
+- VS Code task `Marp: dev` starts both MDX cache rendering and Tailwind theme watching.
 
-## Coding Style & Naming Conventions
+Restart watch tasks after editing tools or component-loading logic.
 
-Use CommonJS for legacy Node scripts and ESM for MDX tooling. Prefer `const`, double quotes, 2-space indentation, and explicit `path.join` or `Path` handling for repository paths. Python scripts should use standard-library-first code, type hints where useful, `argparse` for CLIs, and `snake_case` names. Name courses with lowercase snake case, for example `giao_duc_phap_luat`, and lesson files as `bai_XX.mdx` or `bai_XX.pptx`.
+## Large Deck Workflow
 
-Slide sizing is tuned visually, so arbitrary Tailwind values are allowed when they preserve the deck layout. Prefer explicit values such as `h-[430px]`, `gap-[52px]`, `px-[18px]`, and `text-[20px]` over nearby scale aliases if the alias changes the rendered size. Tailwind IntelliSense canonical warnings are acceptable in slide and component MDX files. Use shared CSS variables where helpful, for example `bg-[var(--red)]`, `text-[var(--muted)]`, and `border-[var(--line)]`.
+For many slides, split work into ranges and use subagents when available. Give each subagent a small slide range, the YAML slice command, and the requirement to inspect screenshots. Merge results manually into one `bai_XX.mdx` and keep component usage consistent.
 
-## Testing Guidelines
-
-There is no formal test suite yet. Validate changes through the relevant command: rebuild CSS after template edits, run `npm run preview` for slide layout checks, and use `--dry-run` before batch rendering. For Python utilities, test a narrow case first with flags such as `--only bai_04` before processing all decks.
-
-## Commit & Pull Request Guidelines
-
-This repository currently has no commit history, so no project-specific commit convention is established. Use short imperative commit messages, for example `Add lesson 04 Marp deck` or `Fix theme pagination spacing`. Pull requests should describe the changed lessons or tools, list validation commands run, and include screenshots or exported previews for visual slide changes.
-
-## Agent-Specific Instructions
-
-Keep generated artifacts separate from source edits when possible. Do not overwrite original files in any `courses/<course_id>/source-ppt/` directory. Keep `template/theme.source.css` focused on shared tokens, typography, and base Marp styling. Put reusable UI in `components/*.mdx`, and put per-slide layout directly in the course `.mdx` deck with Tailwind classes. Regenerate `template/theme.css` with `npm run build:css` after theme changes.
+Validate often with Marp preview. For visual changes, inspect the rendered slide, fix overflow and spacing, then rerun the relevant render command.
