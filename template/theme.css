@@ -200,8 +200,8 @@
   .mt-10 {
     margin-top: calc(var(--spacing) * 10);
   }
-  .mb-\[18px\] {
-    margin-bottom: 18px;
+  .mb-4\.5 {
+    margin-bottom: calc(var(--spacing) * 4.5);
   }
   .block {
     display: block;
@@ -215,26 +215,26 @@
   .inline {
     display: inline;
   }
+  .h-70 {
+    height: calc(var(--spacing) * 70);
+  }
+  .h-107\.5 {
+    height: calc(var(--spacing) * 107.5);
+  }
   .h-\[84px\] {
     height: 84px;
   }
-  .h-\[280px\] {
-    height: 280px;
+  .min-h-65 {
+    min-height: calc(var(--spacing) * 65);
   }
-  .h-\[430px\] {
-    height: 430px;
-  }
-  .min-h-\[260px\] {
-    min-height: 260px;
-  }
-  .min-h-\[275px\] {
-    min-height: 275px;
+  .min-h-68\.75 {
+    min-height: calc(var(--spacing) * 68.75);
   }
   .w-\[84px\] {
     width: 84px;
   }
-  .max-w-\[860px\] {
-    max-width: 860px;
+  .max-w-215 {
+    max-width: calc(var(--spacing) * 215);
   }
   .max-w-\[1040px\] {
     max-width: 1040px;
@@ -278,45 +278,48 @@
   .gap-3 {
     gap: calc(var(--spacing) * 3);
   }
+  .gap-3\.5 {
+    gap: calc(var(--spacing) * 3.5);
+  }
   .gap-4 {
     gap: calc(var(--spacing) * 4);
+  }
+  .gap-4\.5 {
+    gap: calc(var(--spacing) * 4.5);
   }
   .gap-5 {
     gap: calc(var(--spacing) * 5);
   }
-  .gap-\[14px\] {
-    gap: 14px;
+  .gap-5\.5 {
+    gap: calc(var(--spacing) * 5.5);
   }
-  .gap-\[18px\] {
-    gap: 18px;
+  .gap-10\.5 {
+    gap: calc(var(--spacing) * 10.5);
   }
-  .gap-\[22px\] {
-    gap: 22px;
-  }
-  .gap-\[42px\] {
-    gap: 42px;
-  }
-  .gap-\[52px\] {
-    gap: 52px;
+  .gap-13 {
+    gap: calc(var(--spacing) * 13);
   }
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
+  .bg-\(--blue\) {
+    background-color: var(--blue);
+  }
+  .bg-\(--green\) {
+    background-color: var(--green);
+  }
+  .bg-\(--navy\) {
+    background-color: var(--navy);
+  }
+  .bg-\(--red\) {
+    background-color: var(--red);
+  }
   .bg-\[\#356eb9\] {
     background-color: #356eb9;
   }
-  .bg-\[var\(--blue\)\] {
-    background-color: var(--blue);
-  }
-  .bg-\[var\(--green\)\] {
-    background-color: var(--green);
-  }
   .bg-\[var\(--navy\)\] {
     background-color: var(--navy);
-  }
-  .bg-\[var\(--red\)\] {
-    background-color: var(--red);
   }
   .object-contain {
     object-fit: contain;
@@ -359,17 +362,17 @@
     --tw-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
+  .text-\(--gold\) {
+    color: var(--gold);
+  }
+  .text-\(--red\) {
+    color: var(--red);
+  }
   .text-\[\#fffaf1\] {
     color: #fffaf1;
   }
   .text-\[\#fffaf1\]\/90 {
     color: color-mix(in oklab, #fffaf1 90%, transparent);
-  }
-  .text-\[var\(--gold\)\] {
-    color: var(--gold);
-  }
-  .text-\[var\(--red\)\] {
-    color: var(--red);
   }
   .lowercase {
     text-transform: lowercase;
