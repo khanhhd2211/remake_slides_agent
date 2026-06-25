@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Marp: preview",
+      "type": "shell",
+      "command": "npm run preview",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Marp: watch Tailwind theme",
+      "type": "shell",
+      "command": "npm run watch:css",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Marp: build Tailwind theme",
+      "type": "shell",
+      "command": "npm run build:css",
+      "problemMatcher": []
+    }
+  ]
+}

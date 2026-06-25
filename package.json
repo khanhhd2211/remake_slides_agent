@@ -1,0 +1,21 @@
+{
+  "name": "giao_duc_phap_luat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "node ./tools/build_marp_theme.js",
+    "watch:css": "node ./tools/build_marp_theme.js --watch",
+    "preview": "node ./tools/preview_marp.js",
+    "html": "npm run build:css && node ./tools/export_html.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4.4.0",
+    "@tailwindcss/cli": "^4.3.1",
+    "tailwindcss": "^4.3.1"
+  }
+}
