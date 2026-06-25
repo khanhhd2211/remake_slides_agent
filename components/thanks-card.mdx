@@ -14,10 +14,19 @@
     {props.title || "Xin trân trọng cám ơn"}
   </div>
   <div className="mt-8 grid gap-2 text-sm font-semibold leading-[1.5] text-[#fffaf1]/90">
-    <div>{props.school}</div>
-    {props.address && <div>Địa chỉ: {props.address}</div>}
-    {props.hotline && <div>Hotline: {props.hotline}</div>}
-    {props.email && <div>Email: {props.email}</div>}
-    {props.website && <div>Website: {props.website}</div>}
+    <div>{props.school || "Trường Trung Cấp Công Nghệ Hà Nội"}</div>
+      <div>
+        Địa chỉ: {props.address ||
+          "Tầng 4, Trung tâm Văn hóa Nghệ thuật, đường Mai Dịch, quận Cầu Giấy, Hà Nội"}
+      </div>
+      <div>
+        Hotline: {props.hotline ||
+          "0933.279.868 (Thầy Tùng) - 090.323.0405 (Cô Ngân) - 035.988.3882 (Thầy Trọng)"}
+      </div>
+      <div>
+        Email: {props.email || "trungcapcongnghehanoi.edu.vn@gmail.com"}
+      </div>
+      <div>Website: {props.website || "trungcapcongnghehanoi.edu.vn"}</div>
+
   </div>
 </div>

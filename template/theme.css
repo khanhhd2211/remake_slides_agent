@@ -966,6 +966,9 @@
   .gap-10 {
     gap: calc(var(--spacing) * 10);
   }
+  .gap-\[6px\] {
+    gap: 6px;
+  }
   .gap-\[14px\] {
     gap: 14px;
   }

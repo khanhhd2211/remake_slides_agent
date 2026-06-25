@@ -68,13 +68,17 @@ Use `className`, not `class`. Self-close image tags and components when empty: `
 
 Do not use `h3` tags for card titles, labels, diagram nodes, captions, or small section headings inside a slide. Marp theme heading rules can change margins, font size, and auto-scaling in ways that shift layouts. Use `div` or `span` with explicit Tailwind text utilities instead, such as `text-sm`, `text-lg`, `text-xl`, `font-bold`, and `leading-tight`. Reserve semantic headings for actual slide-level structure, usually `h2` for the main slide title.
 
-Use arbitrary Tailwind values when the visual match needs exact sizing, for example `text-[20px]`, `gap-[14px]`, `min-h-[248px]`, or `px-[18px]`. Do not blindly accept Tailwind IntelliSense canonical suggestions if they change the rendered size.
+Keep spacing compact by default. Prefer small gaps such as `gap-1` or `gap-2`, and avoid large vertical offsets; most slide sections should use only `mt-2` or `mt-4`. Use larger spacing only when the original screenshot clearly requires it and the rendered slide has been visually checked.
+
+Use arbitrary Tailwind values when the visual match needs exact sizing, for example `text-[20px]`, `gap-[6px]`, `min-h-[248px]`, or `px-[18px]`. Do not blindly accept Tailwind IntelliSense canonical suggestions if they change the rendered size.
 
 Avoid raw Markdown list syntax inside JSX children unless a list is intended. Text like `1. Vị trí...` may become an ordered list; escape it as `1\. Vị trí...` or place it in a prop/string when needed.
 
 ## Component Guidance
 
 Use existing components for repeated visual primitives: `Card`, `DeckLogo`, `Kicker`, `MediaCard`, `ModuleCard`, `PillItem`, `QuestionCard`, `QuoteBox`, `StatCard`, and `ThanksCard`.
+
+`Card` already provides a flex layout and internal gap by default. Do not add extra `mt-*` spacing to child elements inside a `Card` unless there is a specific visual reason from the source screenshot; let the card gap handle internal rhythm.
 
 The repository already provides standard templates for the first and last slides. Use `CoverSlide` for the opening lesson information slide and `ThanksCard` for the final thank-you/contact slide. Do not recreate these two layouts manually unless the user explicitly asks for a different design.
 
