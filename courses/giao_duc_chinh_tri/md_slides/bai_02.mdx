@@ -1059,9 +1059,9 @@ footer: ""
     </p>
   </Card>
 </div>
-<h3 className="mt-5 text-center text-[22px] font-extrabold text-[var(--red)]">
+<div className="mt-5 text-center text-[22px] font-extrabold text-[var(--red)]">
   Vận động là thuộc tính cố hữu, là phương thức tồn tại của vật&nbsp;chất.
-</h3>
+</div>
 
 ---
 
@@ -1559,6 +1559,7 @@ footer: ""
       contain
       className="h-[145px]"
       src={`../assets/bai_02_s061_image_${name}`}
+      bgColor="#DDE3E7"
       alt={`Hình minh họa đổi mới kinh tế ${i + 1}`}
     />
   ))}
@@ -1591,6 +1592,7 @@ footer: ""
       contain
       className="h-[125px]"
       src={`../assets/bai_02_s062_image_${name}`}
+      bgColor="#E6E2DA"
       alt={`Hình minh họa đổi mới văn hóa giáo dục ${i + 1}`}
     />
   ))}
@@ -1785,18 +1787,18 @@ footer: ""
 <DeckLogo />
 <Kicker>Ví dụ 1</Kicker>
 <h2>Trạng thái rắn, lỏng, hơi của&nbsp;nước</h2>
-<div className="mt-20 px-12">
-  <div className="relative h-[120px]">
-    <div className="absolute left-0 right-0 top-[48px] h-[4px] bg-[var(--navy)]"></div>
-    <div className="absolute right-0 top-[34px] text-[42px] text-[var(--navy)]">
+<div className="mt-[168px] px-[92px]">
+  <div className="relative h-[150px]">
+    <div className="absolute left-0 right-[36px] top-[57px] h-[4px] bg-[var(--navy)]"></div>
+    <div className="absolute right-[1px] top-[34px] text-[54px] leading-none text-[var(--navy)]">
       →
     </div>
-    <div className="absolute left-[28%] top-[24px] h-12 w-12 rounded-full border-4 border-[var(--blue)] bg-white"></div>
-    <div className="absolute left-[76%] top-[24px] h-12 w-12 rounded-full border-4 border-[var(--red)] bg-white"></div>
-    <div className="absolute left-[27%] top-[92px] text-[28px] font-bold">
+    <div className="absolute left-[29%] top-[13px] h-[88px] w-[88px] rounded-full border-[4px] border-[var(--blue)] bg-white"></div>
+    <div className="absolute left-[77%] top-[13px] h-[88px] w-[88px] rounded-full border-[4px] border-[var(--red)] bg-white"></div>
+    <div className="absolute left-[28.8%] top-[92px] text-[31px] font-extrabold leading-none">
       0°C
     </div>
-    <div className="absolute left-[75%] top-[92px] text-[28px] font-bold">
+    <div className="absolute left-[76%] top-[92px] text-[31px] font-extrabold leading-none">
       100°C
     </div>
   </div>
@@ -1834,21 +1836,28 @@ footer: ""
 <DeckLogo />
 <Kicker>Ví dụ 2</Kicker>
 <h2>Thay đổi kích thước hình chữ&nbsp;nhật</h2>
-<div className="mt-8 grid grid-cols-2 gap-10">
-  <div className="text-center">
-    <p className="text-[30px] font-extrabold">A</p>
-    <div className="mx-auto mt-3 h-[145px] w-[245px] border-[6px] border-[var(--blue)] bg-[#dff8e3]"></div>
-    <p className="mt-3 text-[28px] font-bold">6&nbsp;cm</p>
+<div className="mx-auto mt-[72px] w-[700px]">
+  <div className="relative mx-auto h-[300px] w-[650px]">
+    <div className="absolute left-[64px] top-[52px] text-[32px] font-extrabold leading-none">
+      A
+    </div>
+    <div className="absolute right-[64px] top-[52px] text-[32px] font-extrabold leading-none">
+      B
+    </div>
+    <div className="absolute left-[64px] bottom-[18px] text-[32px] font-extrabold leading-none">
+      C
+    </div>
+    <div className="absolute right-[64px] bottom-[18px] text-[32px] font-extrabold leading-none">
+      D
+    </div>
+    <div className="absolute right-[2px] top-[165px] text-[28px] font-extrabold leading-none">
+      2&nbsp;cm
+    </div>
+    <div className="absolute left-[92px] top-[96px] h-[160px] w-[480px] border-[5px] border-[var(--blue)] bg-[#dff8e3]"></div>
+    <div className="absolute left-[285px] bottom-[3px] text-[32px] font-extrabold leading-none">
+      6&nbsp;cm
+    </div>
   </div>
-  <div className="text-center">
-    <p className="text-[30px] font-extrabold">B</p>
-    <div className="mx-auto mt-3 h-[145px] w-[245px] border-[6px] border-[var(--red)] bg-[#eef7ff]"></div>
-    <p className="mt-3 text-[28px] font-bold">10&nbsp;cm</p>
-  </div>
-</div>
-<div className="mt-8 grid grid-cols-2 gap-10 text-center text-[25px] font-bold">
-  <p>C</p>
-  <p>D: 2&nbsp;cm</p>
 </div>
 
 ---
@@ -1880,23 +1889,27 @@ footer: ""
 <DeckLogo />
 <Kicker>Ví dụ 2</Kicker>
 <h2>Khi chiều rộng bằng chiều&nbsp;dài</h2>
-<div className="mt-0 grid grid-cols-2 items-end gap-10">
+<div className="mt-[36px] grid grid-cols-2 items-end gap-[160px] px-[145px]">
   <div className="text-center">
-    <div className="text-xl font-bold leading-tight">Hình chữ nhật</div>
-    <div className="mx-auto mt-4 h-[86px] w-[245px] border-[6px] border-black bg-[#dff8e3]"></div>
-    <p className="mt-3 text-[24px] font-bold">30 cm x 0-30&nbsp;cm</p>
+    <div className="text-[38px] font-extrabold leading-none">Hình chữ nhật</div>
+    <div className="mx-auto mt-[36px] h-[88px] w-[260px] border-[6px] border-black bg-[#dff8e3]"></div>
+    <p className="mt-[8px] text-[28px] font-extrabold leading-none">
+      30 cm x 0-30&nbsp;cm
+    </p>
   </div>
   <div className="text-center">
-    <div className="text-xl font-bold leading-tight">Hình vuông</div>
-    <div className="mx-auto mt-4 h-[190px] w-[190px] border-[6px] border-white bg-[#c8f5d1]"></div>
-    <p className="mt-3 text-[24px] font-bold">30 cm x 30&nbsp;cm</p>
+    <div className="text-[38px] font-extrabold leading-none">Hình vuông</div>
+    <div className="mx-auto mt-[36px] h-[200px] w-[200px] border-[6px] border-white bg-[#c8f5d1]"></div>
+    <p className="mt-[8px] text-[28px] font-extrabold leading-none">
+      30 cm x 30&nbsp;cm
+    </p>
   </div>
 </div>
-<Card accent="blue" className="mt-8 py-4 text-center">
-  <p className="text-[26px] font-bold">
+<div className="mt-[56px] rounded-lg bg-[var(--blue)] px-8 py-[34px] text-center text-white">
+  <p className="mb-0! text-[28px] font-extrabold leading-none">
     Hình chữ nhật sẽ trở thành hình vuông khi chiều rộng bằng chiều&nbsp;dài.
   </p>
-</Card>
+</div>
 
 ---
 
@@ -2019,20 +2032,16 @@ footer: ""
     <p className="text-[30px] font-extrabold">Hạt&nbsp;thóc</p>
   </Card>
 </div>
-<div className="mx-auto mt-12 flex w-[720px] items-center gap-3">
-  {[1, 2, 3, 4, 5, 6].map((i) => (
-    <div
-      key={i}
-      className="h-[70px] w-[70px] rounded-full border-[5px] border-white bg-[var(--blue)]/70"
-    ></div>
-  ))}
-  <div className="text-[46px] font-extrabold text-[var(--gold)]">→</div>
-</div>
-<Card className="mx-auto mt-6 w-[620px] py-3 text-center">
+<div className="flex mt-8">
+  <img
+    src="../assets/bai_02_s083_black_spiral.png"
+    alt="Phát triển theo con đường xoáy ốc"
+    className="h-[190px] w-full object-contain"
+  />
   <p className="text-[25px] font-extrabold">
     Phát triển theo con đường xoáy&nbsp;ốc
   </p>
-</Card>
+</div>
 
 ---
 
@@ -2054,6 +2063,7 @@ footer: ""
         contain
         className="h-[130px]"
         src={`../assets/bai_02_s084_image_${name}`}
+        bgColor="#E7ECEF"
         alt={`Phương tiện số ${label}`}
       />
       <span className="absolute left-2 top-2 grid h-10 w-10 place-items-center rounded-full bg-[var(--blue)] text-[22px] font-extrabold text-white">
@@ -2546,7 +2556,9 @@ footer: ""
 
 <DeckLogo />
 <Kicker>Thực tiễn xã hội</Kicker>
-<h3>Xóa đói giảm nghèo thu hẹp khoảng cách mức&nbsp;sống</h3>
+<div className="text-[32px] font-extrabold leading-[1.12] text-[var(--navy)]">
+  Xóa đói giảm nghèo thu hẹp khoảng cách mức&nbsp;sống
+</div>
 <div className="mt-3 grid grid-cols-[1fr_0.95fr_1fr] gap-1">
   <div className="grid gap-1">
     <MediaCard
@@ -3235,9 +3247,11 @@ footer: ""
 
 <DeckLogo />
 <Kicker>Học thuyết giá trị</Kicker>
-<h3>Nhu cầu đời sống của con&nbsp;người</h3>
+<div className="text-[32px] font-extrabold leading-[1.12] text-[var(--navy)]">
+  Nhu cầu đời sống của con&nbsp;người
+</div>
 <div className="grid grid-cols-3 gap-1">
-  <Card class="p-1!">
+  <Card className="p-1!">
     <MediaCard
       contain
       className="h-[132px]"
@@ -3249,7 +3263,7 @@ footer: ""
       Quần áo
     </div>
   </Card>
-  <Card class="p-1!">
+  <Card className="p-1!">
     <MediaCard
       contain
       className="h-[132px]"
@@ -3269,7 +3283,7 @@ footer: ""
       Nhu cầu đời sống của con&nbsp;người
     </div>
   </Card>
-  <Card class="p-1!">
+  <Card className="p-1!">
     <MediaCard
       contain
       className="h-[132px]"
@@ -3281,7 +3295,7 @@ footer: ""
       Tư liệu sản xuất
     </div>
   </Card>
-  <Card class="p-1!">
+  <Card className="p-1!">
     <MediaCard
       contain
       className="h-[132px]"
@@ -3293,7 +3307,7 @@ footer: ""
       PT đi lại
     </div>
   </Card>
-  <Card class="p-1!">
+  <Card className="p-1!">
     <MediaCard
       contain
       className="h-[160px]"
@@ -4045,7 +4059,9 @@ footer: ""
 
 <DeckLogo />
 <Kicker>Công thức chung của tư bản</Kicker>
-<h3>Công thức chung của tư&nbsp;bản</h3>
+<div className="text-[32px] font-extrabold leading-[1.12] text-[var(--navy)]">
+  Công thức chung của tư&nbsp;bản
+</div>
 <div className="grid grid-cols-3 gap-2">
   <MediaCard
     contain
@@ -4562,7 +4578,9 @@ footer: ""
 
 <DeckLogo />
 <Kicker>Thuật ngữ</Kicker>
-<h3>Các cách gọi về giai cấp công&nbsp;nhân</h3>
+<div className="text-[32px] font-extrabold leading-[1.12] text-[var(--navy)]">
+  Các cách gọi về giai cấp công&nbsp;nhân
+</div>
 <Card>
   <p className="*:text-xs leading-[1.36]">
     <strong>C.Mác và Ph.Ăngghen</strong> dùng nhiều thuật ngữ khác nhau để chỉ
@@ -4867,6 +4885,7 @@ footer: ""
       contain
       className="h-[143px]"
       src={`../assets/bai_02_s172_image_${name}`}
+      bgColor="#E3E5E1"
       alt={alt}
     />
   ))}
@@ -4999,7 +5018,9 @@ footer: ""
 
 <DeckLogo />
 <Kicker>Cách mạng XHCN trong lịch sử</Kicker>
-<h3>Những mốc cách mạng tiêu&nbsp;biểu</h3>
+<div className="text-[32px] font-extrabold leading-[1.12] text-[var(--navy)]">
+  Những mốc cách mạng tiêu&nbsp;biểu
+</div>
 <div className="grid grid-cols-2 gap-2">
   <Card className="p-4 text-center">
     <MediaCard
@@ -5260,6 +5281,7 @@ footer: ""
       contain
       className="h-[105px]"
       src={`../assets/bai_02_s183_image_${name}`}
+      bgColor="#E5E1D7"
       alt={alt}
     />
   ))}
@@ -5483,7 +5505,7 @@ footer: ""
 <DeckLogo />
 <Kicker>3.1. Bản chất khoa học và cách mạng</Kicker>
 <h2>CHỦ NGHĨA MÁC - LÊNIN LÀ HỆ THỐNG LÝ LUẬN KHOA&nbsp;HỌC</h2>
-<QuoteBox class="text-xs! font-bold!">
+<QuoteBox className="text-xs! font-bold!">
   Chủ nghĩa Mác - Lênin là một hệ thống lý luận khoa học, thể hiện trong toàn bộ
   ba bộ phận cấu thành học thuyết.
 </QuoteBox>
