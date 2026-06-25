@@ -60,11 +60,13 @@ Write source slides in `courses/<course_id>/md_slides/bai_XX.mdx`. Use JSX-style
 
 ```mdx
 <Card className="min-h-[200px]">
-  <h3 className="text-[var(--red)]">ĐG chuyên&nbsp;cần</h3>
+  <div className="text-xl font-bold leading-tight text-[var(--red)]">ĐG chuyên&nbsp;cần</div>
 </Card>
 ```
 
 Use `className`, not `class`. Self-close image tags and components when empty: `<DeckLogo />`, `<img src="../assets/logo.png" alt="Logo" />`.
+
+Do not use `h3` tags for card titles, labels, diagram nodes, captions, or small section headings inside a slide. Marp theme heading rules can change margins, font size, and auto-scaling in ways that shift layouts. Use `div` or `span` with explicit Tailwind text utilities instead, such as `text-sm`, `text-lg`, `text-xl`, `font-bold`, and `leading-tight`. Reserve semantic headings for actual slide-level structure, usually `h2` for the main slide title.
 
 Use arbitrary Tailwind values when the visual match needs exact sizing, for example `text-[20px]`, `gap-[14px]`, `min-h-[248px]`, or `px-[18px]`. Do not blindly accept Tailwind IntelliSense canonical suggestions if they change the rendered size.
 
@@ -100,6 +102,30 @@ Do not omit required content. You may rephrase lightly for readability, add smal
 Images must preserve their important details. Do not crop an image in a way that removes meaningful information, labels, people, diagrams, icons, or context. Prefer `object-contain`, full-image framing, or a redesigned layout over `object-cover` when the image carries content. If a crop is purely decorative, confirm that no useful information is lost.
 
 After placing each image, review the rendered slide and compare it with the original screenshot. The image must be clear enough to understand, visually related to nearby text, and not stretched, blurred, clipped, or hidden behind other elements.
+
+Use `tools/card_bg_color.py` to choose image-card backgrounds for `object-contain` images or images with visible letterboxing. Run it on the final asset path, preferably with `--ignore-white`, then pass the suggested hex color to `MediaCard` via `bgColor`, for example:
+
+```sh
+python3 tools/card_bg_color.py courses/giao_duc_chinh_tri/assets/bai_02_s098_image_01.jpg --ignore-white
+```
+
+```mdx
+<MediaCard
+  className="h-[220px]"
+  contain
+  src="../assets/bai_02_s098_image_01.jpg"
+  bgColor="#D8D1C6"
+  alt="Minh họa hoạt động sản xuất vật chất"
+/>
+```
+
+Use `tools/avoid_widows.py` before final render to reduce orphan words in supported text tags (`p`, `li`, headings, `span`, and captions). Run it on the edited deck, and on fragments too if fragments are kept as source material:
+
+```sh
+python3 tools/avoid_widows.py courses/giao_duc_chinh_tri/md_slides/bai_02.mdx
+```
+
+After running either tool, rerender the deck and visually check affected slides. Tool output is a starting point, not a substitute for layout review.
 
 ## Development Commands
 

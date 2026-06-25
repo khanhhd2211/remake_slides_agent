@@ -1,4 +1,7 @@
-<div className={`overflow-hidden rounded-lg border border-[rgba(23,35,59,0.14)] bg-[#d8d1c6] shadow-[0_24px_64px_rgba(19,40,75,0.18)] ${props.className || ""}`}>
+<div
+  className={`w-fit m-auto zoom-115 overflow-hidden rounded-lg border border-[rgba(23,35,59,0.14)] shadow-[0_24px_64px_rgba(19,40,75,0.18)] ${props.className || ""}`}
+  style={{ backgroundColor: props.bgColor || "#d8d1c6" }}
+>
   <img
     className={`${props.contain ? "object-contain object-center" : "object-cover object-top"} block h-full w-full ${props.imageClassName || ""}`}
     src={props.src}
