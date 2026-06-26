@@ -138,8 +138,36 @@ function syncCourseAssets(course) {
     return;
   }
 
-  fs.rmSync(cacheAssets, { recursive: true, force: true });
-  fs.cpSync(sourceAssets, cacheAssets, { recursive: true });
+  function syncDir(fromDir, toDir) {
+    fs.mkdirSync(toDir, { recursive: true });
+    const sourceNames = new Set();
+
+    for (const entry of fs.readdirSync(fromDir, { withFileTypes: true })) {
+      sourceNames.add(entry.name);
+      const from = path.join(fromDir, entry.name);
+      const to = path.join(toDir, entry.name);
+
+      if (entry.isDirectory()) {
+        syncDir(from, to);
+        continue;
+      }
+
+      const fromStat = fs.statSync(from);
+      const toStat = fs.existsSync(to) ? fs.statSync(to) : undefined;
+
+      if (!toStat || fromStat.size !== toStat.size || fromStat.mtimeMs > toStat.mtimeMs) {
+        fs.copyFileSync(from, to);
+      }
+    }
+
+    for (const entry of fs.readdirSync(toDir, { withFileTypes: true })) {
+      if (!sourceNames.has(entry.name)) {
+        fs.rmSync(path.join(toDir, entry.name), { recursive: true, force: true });
+      }
+    }
+  }
+
+  syncDir(sourceAssets, cacheAssets);
 }
 
 async function renderFile(input, output, components) {
@@ -158,10 +186,16 @@ async function main() {
   const output = readArg("--output");
   const course = readArg("--course") || process.env.COURSE || "giao_duc_chinh_tri";
   const deck = readArg("--deck") || process.env.DECK || "bai_01";
-  syncCourseAssets(course);
+  const skipAssets = process.argv.includes("--skip-assets");
+
+  if (!skipAssets) {
+    syncCourseAssets(course);
+  }
 
   async function renderAll() {
-    syncCourseAssets(course);
+    if (!skipAssets) {
+      syncCourseAssets(course);
+    }
     const components = await loadSlideComponents();
     const slidesDir = path.join(root, "courses", course, "md_slides");
     const decks = fs

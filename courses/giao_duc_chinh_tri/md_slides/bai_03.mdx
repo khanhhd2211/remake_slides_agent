@@ -27,7 +27,7 @@ footer: ""
 </h2>
 <div className="mt-4 flex gap-5">
   <img
-    className="w-[350px]"
+    className="h-[430px] w-auto rounded-lg"
     src="../assets/bai_03_s002_image_01.png"
     alt="Chân dung Chủ tịch Hồ Chí Minh trong tư liệu nguồn"
   />
@@ -98,7 +98,7 @@ footer: ""
 <h2>1.1. Khái niệm tư tưởng Hồ Chí&nbsp;Minh</h2>
 <div className="mt-6 flex items-start gap-6">
   <img
-    className="w-[350px]"
+    className="mx-auto h-[450px] w-auto rounded-lg"
     src="../assets/bai_03_s005_image_01.png"
     alt="Ảnh Chủ tịch Hồ Chí Minh"
   />
@@ -262,7 +262,7 @@ footer: ""
       Toàn quyền Pháp Anbe&nbsp;Xarô
     </div>
   </div>
-  <div class="grid grid-cols-2">
+  <div className="grid grid-cols-2">
     <div>
       <MediaCard
         className="h-[310px] w-fit"
@@ -358,7 +358,7 @@ footer: ""
       Phan Bội&nbsp;Châu
     </div>
   </div>
-  <div class="grid grid-cols-2  gap-4">
+  <div className="grid grid-cols-2 gap-4">
     <div>
       <MediaCard
         className="h-[260px] w-fit"
@@ -509,15 +509,9 @@ footer: ""
     Nhữ đẳng hành khan thủ bại hư
   </QuoteBox>
   <div className="grid gap-4">
-    <Card accent="red" className="justify-center text-center">
-      <div className="text-[30px] font-bold text-inherit">
-        Chủ nghĩa yêu nước
-      </div>
-    </Card>
     <div>
       <MediaCard
-        className="h-full w-fit"
-        contain
+        className="w-20!"
         src="../assets/bai_03_s020_image_01.png"
         bgColor="#D5C19A"
         alt="Cọc gỗ trên sông Bạch Đằng"
@@ -526,6 +520,11 @@ footer: ""
         Cọc gỗ trên sông Bạch&nbsp;Đằng
       </div>
     </div>
+    <Card accent="red" className="justify-center text-center">
+      <div className="text-[30px] font-bold text-inherit">
+        Chủ nghĩa yêu nước
+      </div>
+    </Card>
   </div>
 </div>
 
@@ -534,7 +533,7 @@ footer: ""
 <DeckLogo />
 <Kicker>Những giá trị văn hoá truyền thống dân tộc</Kicker>
 <h2>Tinh thần đoàn kết nhân nghĩa thủy&nbsp;chung</h2>
-<div className="mt-3 grid grid-cols-[0.9fr_1.1fr] gap-4">
+<div className="mt-3 grid grid-cols-[1.3fr_1.1fr] gap-4">
   <div className="grid gap-3">
     <QuoteBox textClassName="text-[20px] font-bold leading-[1.18]">
       <div>Một cây làm chẳng nên non</div>
@@ -576,33 +575,33 @@ footer: ""
 <DeckLogo />
 <Kicker>Những giá trị văn hoá truyền thống dân tộc</Kicker>
 <h2>Cần cù, thông minh, sáng&nbsp;tạo</h2>
-<div className="mt-4 grid grid-cols-[1fr_0.72fr_1fr] gap-4">
+<div className="mt-4 grid grid-cols-[auto_auto_auto] gap-4">
+  <div>
+    <MediaCard
+      className="h-[255px] w-fit"
+      contain
+      src="../assets/bai_03_s022_image_02.jpg"
+      bgColor="#CFC9C1"
+      alt="Tư liệu về thành Cổ Loa"
+    />
+    <div className="mt-2 text-center text-[22px] font-bold">
+      Bản đồ thành Cổ&nbsp;Loa
+    </div>
+  </div>
   <MediaCard
-    className="h-[255px] w-fit"
-    contain
-    src="../assets/bai_03_s022_image_02.jpg"
-    bgColor="#CFC9C1"
-    alt="Tư liệu về thành Cổ Loa"
-  />
-  <MediaCard
-    className="h-[255px] w-fit"
+    className="h-[255px] w-fit mb-6"
     contain
     src="../assets/bai_03_s022_image_03.jpg"
     bgColor="#D7D5BF"
     alt="Cảnh đồng ruộng"
   />
-  <div>
-    <MediaCard
-      className="h-[255px] w-fit"
-      contain
-      src="../assets/bai_03_s022_image_01.jpg"
-      bgColor="#D9D7C8"
-      alt="Bản đồ thành Cổ Loa"
-    />
-    <p className="mt-2 text-center text-[22px] font-bold">
-      Bản đồ thành Cổ&nbsp;Loa
-    </p>
-  </div>
+  <MediaCard
+    className="h-[255px] w-fit mb-6"
+    contain
+    src="../assets/bai_03_s022_image_01.jpg"
+    bgColor="#D9D7C8"
+    alt="Bản đồ thành Cổ Loa"
+  />
 </div>
 
 ---
@@ -610,9 +609,9 @@ footer: ""
 <DeckLogo />
 <Kicker>Những giá trị văn hoá truyền thống dân tộc</Kicker>
 <h2>Lạc quan, yêu&nbsp;đời</h2>
-<div className="mt-4 grid grid-cols-[1.25fr_0.75fr] gap-5">
+<div className="mt-4 grid grid-cols-[auto_auto] gap-2">
   <MediaCard
-    className="h-[265px] w-fit"
+    className="h-[265px] w-full"
     contain
     src="../assets/bai_03_s023_image_01.png"
     bgColor="#C8D5DC"
@@ -704,7 +703,14 @@ footer: ""
 <DeckLogo />
 <Kicker>Chủ nghĩa Mác - Lênin</Kicker>
 <h2>Kim chỉ&nbsp;nam</h2>
-<div className="mt-3 grid grid-cols-[1.25fr_0.75fr] gap-5">
+<div className="mt-3 grid grid-cols-[auto_auto] gap-5">
+  <MediaCard
+    className="h-full w-fit"
+    contain
+    src="../assets/bai_03_s027_image_01.jpg"
+    bgColor="#24201B"
+    alt="Tượng chân dung"
+  />
   <QuoteBox>
     “Chủ nghĩa Mác-Lênin đối với chúng ta, những người cách mạng và nhân dân
     Việt Nam không những là cái cẩm nang thần kỳ, là cái kim chỉ nam mà còn là
@@ -715,18 +721,12 @@ footer: ""
       (Hồ Chí Minh toàn tập -tập10 tr&nbsp;128)
     </span>
   </QuoteBox>
-  <MediaCard
-    className="h-[215px] w-fit"
-    contain
-    src="../assets/bai_03_s027_image_01.jpg"
-    bgColor="#24201B"
-    alt="Tượng chân dung"
-  />
 </div>
-<Card accent="blue" className="mt-3 min-h-[72px] justify-center text-center">
-  <p className="text-[26px] font-bold leading-tight text-inherit">
-    Ưu điểm lớn nhất của chủ nghĩa Mác là cách làm việc biện&nbsp;chứng.
-  </p>
+<Card
+  accent="blue"
+  className="mt-3 min-h-[72px] justify-center text-center text-[26px] font-bold leading-tight"
+>
+  Ưu điểm lớn nhất của chủ nghĩa Mác là cách làm việc biện&nbsp;chứng.
 </Card>
 
 ---
@@ -734,8 +734,8 @@ footer: ""
 <DeckLogo />
 <Kicker>c) Nhân tố chủ quan Hồ Chí Minh</Kicker>
 <h2>Trước&nbsp;hết</h2>
-<div className="mt-3 grid grid-cols-[1fr_0.9fr] gap-5">
-  <Card accent="red" className="justify-center">
+<div className="mt-3 grid grid-cols-[auto_auto] gap-5">
+  <Card accent="red" className="justify-start">
     <p className="text-[31px] font-bold leading-[1.28] text-inherit">
       Trước hết, đó là tư duy độc lập, tự chủ, sáng tạo; cộng với sự nhận xét,
       phê phán tinh tường, sáng suốt trong việc nghiên cứu, tìm hiểu hiện thực
@@ -755,8 +755,8 @@ footer: ""
 
 <DeckLogo />
 <Kicker>Nguồn gốc tư tưởng Hồ Chí Minh</Kicker>
-<div className="grid h-full grid-cols-2 items-center gap-6 pr-3">
-  <Card className="min-h-[300px] justify-center">
+<div className="mt-4 grid grid-cols-2 items-center gap-2 pr-3">
+  <Card className="h-full">
     <p className="text-[31px] font-semibold leading-[1.3]">
       <strong>Thứ&nbsp;hai</strong>, là sự khổ công học tập nhằm chiếm lĩnh vốn
       tri thức của nhân loại, học tập kinh nghiệm đấu tranh của phong trào giải
@@ -776,8 +776,8 @@ footer: ""
 
 <DeckLogo />
 <Kicker>Nguồn gốc tư tưởng Hồ Chí Minh</Kicker>
-<div className="grid h-full grid-cols-2 items-center gap-6 pr-3">
-  <Card accent="red" className="min-h-[320px] justify-center">
+<div className="mt-4 grid grid-cols-2 items-center gap-2 pr-3">
+  <Card className="h-full justify-center">
     <p className="text-[30px] font-semibold leading-[1.32]">
       <strong>Thứ&nbsp;ba,</strong> là ý chí của một nhà yêu nước, một chiến sĩ
       cộng sản nhiệt thành cách mạng, một trái tim yêu nước, thương dân, sẵn
@@ -797,8 +797,8 @@ footer: ""
 
 <DeckLogo />
 <Kicker>Nguồn gốc tư tưởng Hồ Chí Minh</Kicker>
-<div className="grid h-full grid-cols-2 items-center gap-6 pr-3">
-  <Card className="min-h-[320px] justify-center">
+<div className="mt-4 grid grid-cols-2 items-center gap-2 pr-3">
+  <Card className="h-full justify-center">
     <p className="text-[31px] font-semibold leading-[1.3]">
       <strong>Thứ&nbsp;tư,</strong> là một gương đạo đức cao đẹp, trong sáng
       cần, kiệm, liêm, chính, chí công vô tư, đời tư trong sáng, cuộc sống riêng
@@ -818,36 +818,24 @@ footer: ""
 
 <DeckLogo />
 <Kicker>Tác phẩm Chủ tịch Hồ Chí Minh</Kicker>
-<div className="grid h-full grid-cols-2 items-center gap-6 pr-3">
-  <div className="grid grid-cols-2 gap-4">
-    <MediaCard
-      className="h-[270px] w-fit"
-      contain
-      src="../assets/bai_03_s032_image_01.png"
-      bgColor="#E7E5D7"
-      alt="Nhà sàn và Chủ tịch Hồ Chí Minh"
-    />
-    <MediaCard
-      className="h-[270px] w-fit"
-      contain
-      src="../assets/bai_03_s032_image_02.jpg"
-      bgColor="#D7D0C2"
-      alt="Tủ sách tác phẩm Chủ tịch Hồ Chí Minh"
-    />
-  </div>
-  <Card accent="navy" className="min-h-[330px] justify-center">
-    <div className="text-[22px] font-bold uppercase tracking-[0.08em] text-[#f8d36a]">
-      Tác phẩm
-    </div>
-    <div className="text-[32px] font-bold leading-tight">
-      CHỦ TỊCH
-      <br />
-      HỒ CHÍ MINH
-    </div>
-    <div className="mt-4 text-[34px] font-bold leading-tight">
-      1.3. Quá trình hình thành tư tưởng Hồ Chí Minh
-    </div>
-  </Card>
+<div className="mt-4 text-[34px] font-bold leading-tight col-span-2">
+  1.3. Quá trình hình thành tư tưởng Hồ Chí Minh
+</div>
+<div className="mt-4 grid grid-cols-2 items-center gap-2 pr-3">
+  <MediaCard
+    className="h-[270px] w-full"
+    contain
+    src="../assets/bai_03_s032_image_01.png"
+    bgColor="#E7E5D7"
+    alt="Nhà sàn và Chủ tịch Hồ Chí Minh"
+  />
+  <MediaCard
+    className="h-[270px] w-full"
+    contain
+    src="../assets/bai_03_s032_image_02.jpg"
+    bgColor="#D7D0C2"
+    alt="Tủ sách tác phẩm Chủ tịch Hồ Chí Minh"
+  />
 </div>
 
 ---
@@ -891,9 +879,9 @@ footer: ""
       "../assets/bai_03_s033_image_02.jpg",
     ],
   ].map(([index, time, text, src]) => (
-    <Card key={index} className="min-h-[365px] px-2! py-2! justify-start">
+    <Card key={index} className="min-h-[365px] px-2! py-2! items-start ">
       <MediaCard
-        className="h-20 w-full"
+        className="h-20 w-full m-0!"
         contain
         src={src}
         bgColor="#E8E2D8"
@@ -916,44 +904,34 @@ footer: ""
 <h2>Thứ nhất, Thời kỳ niên thiếu đến khi ra nước ngoài&nbsp;(1890-1911)</h2>
 <div className="mt-2 grid grid-cols-3 gap-3">
   <Card className="px-3! py-3!">
-    <MediaCard
-      className="h-[178px] w-fit"
-      contain
+    <img
       src="../assets/bai_03_s034_image_01.png"
-      bgColor="#D8C8A4"
       alt="Hoàng Trù quê mẹ và làng Sen quê cha"
     />
     <div className="text-center text-[18px] font-bold leading-tight">
-      Hoàng Trù quê mẹ
-      <br />
-      và làng Sen quê cha
+      Hoàng Trù quê mẹ và làng Sen quê&nbsp;cha
     </div>
   </Card>
   <Card className="px-3! py-3!">
-    <MediaCard
-      className="h-[178px] w-fit"
-      contain
-      src="../assets/bai_03_s034_image_02.png"
-      bgColor="#D6B07B"
-      alt="Sông Lam - Núi Hồng"
-    />
-    <div className="text-center text-[18px] font-bold">Sông Lam – Núi Hồng</div>
+    <img src="../assets/bai_03_s034_image_02.png" alt="Sông Lam - Núi Hồng" />
+    <div className="text-center text-[18px] font-bold mt-auto">
+      Sông Lam – Núi Hồng
+    </div>
   </Card>
   <Card className="px-3! py-3!">
-    <MediaCard
-      className="h-[178px] w-fit"
-      contain
+    <img
       src="../assets/bai_03_s034_image_03.png"
-      bgColor="#D6D6D6"
+      class="h-30 object-cover object-top rounded-lg"
       alt="Người về thăm quê"
     />
-    <div className="text-center text-[18px] font-bold">Người về thăm quê</div>
+    <div className="text-center text-[18px] font-bold mt-auto">
+      Người về thăm quê
+    </div>
   </Card>
 </div>
-<div className="mt-1 text-center text-[15px] font-bold leading-[1.12] text-[var(--ink)]">
-  QUÊ HƯƠNG NGHĨA TRỌNG TÌNH CAO
-  <br />
-  NĂM MƯƠI NĂM ẤY BIẾT BAO NHIÊU TÌNH
+<div className="mt-2 text-center text-[15px] font-bold leading-[1.12] text-[var(--ink)]">
+  <div>QUÊ HƯƠNG NGHĨA TRỌNG TÌNH CAO</div>
+  <div>NĂM MƯƠI NĂM ẤY BIẾT BAO NHIÊU TÌNH</div>
 </div>
 
 ---
@@ -963,11 +941,9 @@ footer: ""
 <h2>Thời kỳ hình thành tư tưởng yêu nước, thương nòi (Trước năm&nbsp;1911)</h2>
 <div className="mt-2 grid grid-cols-2 gap-3">
   <div className="flex items-center gap-3 rounded-lg border border-[var(--line)] bg-white/92 px-[14px] py-[10px]">
-    <MediaCard
+    <img
       className="h-[220px] w-[160px]"
-      contain
       src="../assets/bai_03_s035_image_05.png"
-      bgColor="#151515"
       alt="Cụ Nguyễn Sinh Sắc"
     />
     <div className="flex-1 text-center text-[19px] font-bold leading-[1.2]">
@@ -979,11 +955,9 @@ footer: ""
     </div>
   </div>
   <div className="flex items-center gap-3 rounded-lg border border-[var(--line)] bg-white/92 px-[14px] py-[10px]">
-    <MediaCard
+    <img
       className="h-[220px] w-[160px]"
-      contain
       src="../assets/bai_03_s035_image_04.png"
-      bgColor="#151515"
       alt="Bà Hoàng Thị Loan"
     />
     <div className="flex-1 text-center text-[19px] font-bold leading-[1.2]">
@@ -1003,31 +977,25 @@ footer: ""
 <h2>Thời kỳ hình thành tư tưởng yêu nước, thương nòi (Trước năm&nbsp;1911)</h2>
 <div className="mt-3 grid grid-cols-2 gap-4">
   <Card className="items-center px-4! py-4!">
-    <MediaCard
+    <img
       className="h-[250px] w-fit"
-      contain
       src="../assets/bai_03_s036_image_05.png"
-      bgColor="#151515"
       alt="Bà Nguyễn Thị Thanh"
     />
     <div className="text-center text-[18px] font-bold leading-tight">
-      Bà Nguyễn Thị Thanh
-      <br />
-      (1884 - 1954)
+      <div>Bà Nguyễn Thị Thanh</div>
+      <div>(1884 - 1954)</div>
     </div>
   </Card>
   <Card className="items-center px-4! py-4!">
-    <MediaCard
+    <img
       className="h-[250px] w-fit"
-      contain
       src="../assets/bai_03_s036_image_04.png"
-      bgColor="#151515"
       alt="Ông Nguyễn Sinh Khiêm"
     />
     <div className="text-center text-[18px] font-bold leading-tight">
-      Ông Nguyễn Sinh Khiêm
-      <br />
-      (1888 – 1950)
+      <div>Ông Nguyễn Sinh Khiêm</div>
+      <div>(1888 – 1950)</div>
     </div>
   </Card>
 </div>
@@ -1053,7 +1021,7 @@ footer: ""
   </Card>
   <Card className="px-3! py-3!">
     <MediaCard
-      className="h-[245px] w-fit"
+      className="h-[245px] w-fit m-0!"
       contain
       src="../assets/bai_03_s037_image_03.jpg"
       bgColor="#D9DED5"
@@ -1235,12 +1203,10 @@ footer: ""
 
 <DeckLogo />
 <Kicker>1911 – 1920</Kicker>
-<h2>
-  Thời kỳ tìm tòi con đường cứu nước, giải phóng dân tộc (1911 –&nbsp;1920)
-</h2>
-<div className="grid grid-cols-[0.78fr_1.22fr] items-center gap-4">
+<h2>Thời kỳ tìm đường cứu nước, giải phóng dân tộc (1911 –&nbsp;1920)</h2>
+<div className="grid grid-cols-[auto_auto] items-start gap-4">
   <MediaCard
-    className="h-[248px] w-fit"
+    className="h-full"
     contain
     src="../assets/bai_03_s042_image_01.jpg"
     bgColor="#E3DED4"
@@ -1248,19 +1214,16 @@ footer: ""
   />
   <div className="space-y-2">
     <Card className="border-l-[8px] border-l-[var(--red)] bg-white/92 px-[20px] py-[16px]">
-      <p className="text-[21px] font-bold leading-[1.14] text-[var(--red)]">
-        Muốn cứu nước và giải phóng dân&nbsp;tộc,
-        <br />
-        không có con đường nào khác con&nbsp;đường{" "}
-        <span className="text-[#ffe27a]">cách mạng vô&nbsp;sản</span>
-      </p>
+      <div>Muốn cứu nước và giải phóng dân&nbsp;tộc,</div>
+      <div>không có con đường nào khác con&nbsp;đường </div>
+      <span className="text-[var(--gold)]">cách mạng vô&nbsp;sản</span>
     </Card>
     <Card>
-      <p className="text-[14px] font-bold leading-tight">
+      <p className="leading-tight">
         Bản sơ thảo lần thứ nhất NHỮNG LUẬN CƯƠNG VỀ CÁC VẤN ĐỀ DÂN TỘC VÀ THUỘC
         ĐỊA V.I.&nbsp;LÊNIN
       </p>
-      <p className="text-[13px] font-semibold leading-tight">
+      <p className="leading-tight">
         Lênin và tác phẩm thông qua tại đại hội II của Quốc tế cộng sản (1920)
         đã tác động mạnh mẽ đến tư tưởng của Nguyễn Aí&nbsp;Quốc
       </p>
