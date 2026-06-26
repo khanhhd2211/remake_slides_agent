@@ -1689,6 +1689,9 @@
   .py-5 {
     padding-block: calc(var(--spacing) * 5);
   }
+  .py-5\! {
+    padding-block: calc(var(--spacing) * 5) !important;
+  }
   .py-6 {
     padding-block: calc(var(--spacing) * 6);
   }
