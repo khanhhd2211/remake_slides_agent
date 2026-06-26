@@ -134,6 +134,15 @@ Use existing components for repeated visual primitives: `Card`, `DeckLogo`, `Kic
 
 The repository already provides standard templates for the first and last slides. Use `CoverSlide` for the opening lesson information slide and `ThanksCard` for the final thank-you/contact slide. Do not recreate these two layouts manually unless the user explicitly asks for a different design.
 
+For a closing "chào tạm biệt" or thank-you slide, do not write custom MDX such as a manual `MediaCard` + `Card` composition or invent new farewell text. Use only:
+
+```mdx
+{/* Slide 152 */}
+<ThanksCard />
+```
+
+If the source closing slide is being remade in the standard repository style, `ThanksCard` is the required implementation.
+
 Create new `components/*.mdx` only for reusable styled elements. Avoid creating layout components such as fixed grids or fixed slide templates. Slide layout should stay flexible inside `bai_*.mdx` using Tailwind classes directly, because each source slide may need a different content structure.
 
 Component styles should be mostly Tailwind classes and CSS variables. Keep global CSS limited to shared tokens, type scale, Marp defaults, and small base rules.

@@ -13,11 +13,13 @@ Bạn được phép:
 - Chuyển một raster text/diagram quá nhỏ thành MDX text/cards/diagram block nếu nội dung của raster đã có trong YAML hoặc trên slide hiện tại.
 - Chỉnh `className`, Tailwind utilities, `MediaCard` props, `bgColor`, `gap`, `text-*`, `min-h-*`, `grid`, `flex`, `basis`, `w-*`, `h-*`.
 - Chạy render, kiểm tra ảnh xuất ra, và sửa tiếp cho đến khi không còn overflow hoặc vấn đề đọc hiểu rõ ràng.
+- Với slide kết thúc kiểu "chào tạm biệt" hoặc cảm ơn, thay mọi layout tự dựng thủ công bằng đúng component chuẩn `<ThanksCard />`.
 
 Mục tiêu bắt buộc:
 
 - Tiết kiệm khoảng trắng tối đa trong slide. Whitespace chỉ được giữ lại khi thật sự giúp nhóm nội dung hoặc tăng readability; không được để các dải trống lớn, khoảng thở dư thừa, hoặc card/section quá rộng so với nội dung.
 - Ảnh không được hở padding nhìn thấy được. Không đặt ảnh trong khung/card/container tạo cảm giác ảnh bị lọt thỏm trong một vùng trắng hoặc vùng nền lớn.
+- Không set đồng thời `w-*` và `h-*` trên cùng một `MediaCard`/ảnh trừ khi crop đó đã được kiểm tra và là chủ ý rõ ràng. Nếu ảnh đang bị crop mất nội dung, bỏ một chiều cố định đi trước tiên; `w-full` đi cùng `h-*` thường làm ảnh bị kéo quá rộng và mất phần hữu ích.
 - Ưu tiên line layout có thể kiểm soát: caption, thơ/câu trích ngắn, tên người + năm sinh mất nên dùng nhiều `<div>` con trong một wrapper compact thay vì dùng `<br />`. `<br />` thường tạo nhịp dòng khó đo, dễ làm thừa khoảng trắng hoặc lệch alignment khi render Marp.
 - Với ảnh đứng hoặc ảnh hẹp đặt cạnh text, không ép vào cột tỷ lệ rộng làm ảnh bị nhỏ và tạo khoảng trống. Dùng all-auto arbitrary grids như `grid-cols-[auto_auto]` hoặc `grid-cols-[auto_auto_auto]`, kèm chiều cao/rộng rõ ràng để ảnh giữ khung chặt và text nằm sát đúng quan hệ nội dung.
 - Ảnh chỉ chứa chữ, quote, khẩu hiệu, heading, hoặc slogan phải được dựng lại bằng MDX text/component thay vì chèn raster, nhất là khi ảnh có hiệu ứng méo, bóng, phản chiếu, chữ nhỏ, hoặc contrast kém.
@@ -31,6 +33,7 @@ Bạn không được phép:
 - Lấy ảnh từ slide khác nếu không có lý do rõ ràng và chưa ghi chú.
 - Sao chép phong cách cũ của PowerPoint như màu, font, nền, bóng, decorative shapes.
 - Tạo component layout cố định mới nếu chỉ dùng cho một slide; ưu tiên sửa trực tiếp trong MDX slide.
+- Tự viết nội dung hoặc tự dựng layout thủ công cho slide kết thúc kiểu cảm ơn/chào tạm biệt khi repository đã có `ThanksCard`.
 
 ## Nguồn Sự Thật
 
@@ -129,6 +132,12 @@ Hướng sửa ưu tiên:
 - Với tiêu đề nhỏ trong card, dùng `div`/`span` với Tailwind text utilities.
 - Nếu ảnh cần caption, dùng một `div` compact chứa `MediaCard` và caption. Không dùng `Card` làm vỏ ngoài trừ khi toàn bộ image-caption group thật sự là một card nội dung độc lập.
 - Trong card màu, đổi `<strong>` thành `span`/`div` với `font-bold text-inherit` hoặc màu sáng rõ ràng. Không để global `strong` tự đổi sang màu đỏ.
+- Với slide kết thúc kiểu cảm ơn/chào tạm biệt, không dùng `MediaCard` + `Card` hoặc layout custom khác. Phải thay bằng đúng:
+
+```mdx
+{/* Slide 152 */}
+<ThanksCard />
+```
 
 #### Image Readability
 
@@ -212,6 +221,7 @@ Khi sửa MDX:
 - Không dùng `<br />` như công cụ layout mặc định cho caption/label nhiều dòng; dùng block children để kiểm soát khoảng cách dòng.
 - Không dùng grid tỷ lệ `fr` cứng như `grid-cols-[0.78fr_1.22fr]`; đổi sang all-auto arbitrary grids và tự kiểm lại render để tránh overflow.
 - Không dùng `<strong>` trong card có nền màu hoặc `accent`; dùng `font-bold text-inherit` để giữ tương phản.
+- Không tự viết thêm câu cảm ơn/chúc học tốt mới cho slide kết thúc; nếu là closing slide chuẩn thì chỉ dùng `ThanksCard`.
 
 ## Quy Trình Sửa Khuyến Nghị
 
