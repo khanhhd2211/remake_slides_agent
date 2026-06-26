@@ -12,7 +12,9 @@
     "html": "npm run build:css && node ./tools/export_html.js",
     "check:overflow": "node ./tools/check_slide_overflow.js",
     "check:images": "node ./tools/check_slide_images.js",
-    "check:alpha-png": "node ./tools/check_alpha_png_assets.js"
+    "check:alpha-png": "node ./tools/check_alpha_png_assets.js",
+    "check:image-quality": "node ./tools/check_slide_image_quality.js",
+    "sharpen:slide-images": "python3 ./tools/sharpen_slide_images.py"
   },
   "keywords": [],
   "author": "",

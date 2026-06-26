@@ -118,6 +118,8 @@ For layouts with one image and one neighboring text block in the same row, prefe
 
 Images must visually fill their allocated region as much as possible. Do not place images inside padded white cards, loose frames, or oversized containers that leave visible empty margins around the image. The current `MediaCard` is cover-first; avoid adding legacy `contain` props in new edits. If preserving full image content is necessary, solve it with explicit dimensions, natural aspect ratio, or a redesigned layout that still keeps the frame tight.
 
+Never set both `w-*` and `h-*` on the same image media component unless the crop is explicitly intended and visually verified. For `MediaCard`, choose one controlling dimension and let the other follow the asset aspect ratio or the surrounding layout. A `w-full` plus fixed height combination is especially risky because it can force unwanted crop or empty framing.
+
 Do not wrap a single `MediaCard` or `<img>` in a `Card` merely to create a border, rounded corner, shadow, or padding. `MediaCard` already owns its visual frame. If an image needs a caption, place the image and caption in a compact unframed `div` or make the image/caption group itself the repeated item, without adding a padded card that shrinks the image.
 
 Do not use `<strong>` inside colored cards or cards with `accent="red"`, `accent="navy"`, `accent="blue"`, `accent="green"`, or a solid colored background. The global theme makes `strong` red, which breaks contrast on colored cards. Use `span`/`div` with `font-bold text-inherit` or an explicit light color instead.
