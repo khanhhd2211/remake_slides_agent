@@ -11,13 +11,16 @@ Bạn được phép:
 - Thay component đang dùng sai bằng component phù hợp hơn trong `components/`.
 - Gộp hoặc tách các vùng thiết kế trong cùng một slide để giảm rối, miễn là không đổi số lượng slide và không đổi nội dung.
 - Chuyển một raster text/diagram quá nhỏ thành MDX text/cards/diagram block nếu nội dung của raster đã có trong YAML hoặc trên slide hiện tại.
-- Chỉnh `className`, Tailwind utilities, `MediaCard` props, `bgColor`, `contain`, `object-contain`, `gap`, `text-*`, `min-h-*`, `grid`, `flex`, `basis`, `w-*`, `h-*`.
+- Chỉnh `className`, Tailwind utilities, `MediaCard` props, `bgColor`, `gap`, `text-*`, `min-h-*`, `grid`, `flex`, `basis`, `w-*`, `h-*`.
 - Chạy render, kiểm tra ảnh xuất ra, và sửa tiếp cho đến khi không còn overflow hoặc vấn đề đọc hiểu rõ ràng.
 
 Mục tiêu bắt buộc:
 
 - Tiết kiệm khoảng trắng tối đa trong slide. Whitespace chỉ được giữ lại khi thật sự giúp nhóm nội dung hoặc tăng readability; không được để các dải trống lớn, khoảng thở dư thừa, hoặc card/section quá rộng so với nội dung.
 - Ảnh không được hở padding nhìn thấy được. Không đặt ảnh trong khung/card/container tạo cảm giác ảnh bị lọt thỏm trong một vùng trắng hoặc vùng nền lớn.
+- Ưu tiên line layout có thể kiểm soát: caption, thơ/câu trích ngắn, tên người + năm sinh mất nên dùng nhiều `<div>` con trong một wrapper compact thay vì dùng `<br />`. `<br />` thường tạo nhịp dòng khó đo, dễ làm thừa khoảng trắng hoặc lệch alignment khi render Marp.
+- Với ảnh đứng hoặc ảnh hẹp đặt cạnh text, không ép vào cột tỷ lệ rộng làm ảnh bị nhỏ và tạo khoảng trống. Dùng all-auto arbitrary grids như `grid-cols-[auto_auto]` hoặc `grid-cols-[auto_auto_auto]`, kèm chiều cao/rộng rõ ràng để ảnh giữ khung chặt và text nằm sát đúng quan hệ nội dung.
+- Ảnh chỉ chứa chữ, quote, khẩu hiệu, heading, hoặc slogan phải được dựng lại bằng MDX text/component thay vì chèn raster, nhất là khi ảnh có hiệu ứng méo, bóng, phản chiếu, chữ nhỏ, hoặc contrast kém.
 
 Bạn không được phép:
 
@@ -114,14 +117,18 @@ Tìm các dấu hiệu:
 - Dùng `StatCard` cho nội dung không phải số liệu.
 - Dùng `QuestionCard` cho ý không phải câu hỏi/thảo luận.
 - Dùng `PillItem` quá nhiều khiến list dài bị rối.
-- Dùng raw `<img>` khi cần `MediaCard` để có contain/background/caption ổn định.
+- Dùng raw `<img>` khi cần `MediaCard` để có border/rounded/shadow/background ổn định.
 - Dùng heading semantic như `h3` cho label nhỏ trong card.
+- Bọc `MediaCard` trong `Card` chỉ để lấy padding/border/rounded, làm ảnh bị hở khung hoặc nhỏ đi.
+- Dùng `<strong>` trong `Card` có màu hoặc `accent`, làm chữ nhấn mạnh bị đỏ trên nền đỏ/navy/blue/green và mất tương phản.
 
 Hướng sửa ưu tiên:
 
 - Chọn component theo vai trò nội dung, không theo thói quen.
-- Với ảnh meaningful, ưu tiên `MediaCard contain`.
+- Với ảnh meaningful, ưu tiên `MediaCard` có kích thước rõ ràng (`h-*`, `w-*`, `w-fit`) và layout giữ ảnh đủ lớn, không thêm legacy `contain` prop.
 - Với tiêu đề nhỏ trong card, dùng `div`/`span` với Tailwind text utilities.
+- Nếu ảnh cần caption, dùng một `div` compact chứa `MediaCard` và caption. Không dùng `Card` làm vỏ ngoài trừ khi toàn bộ image-caption group thật sự là một card nội dung độc lập.
+- Trong card màu, đổi `<strong>` thành `span`/`div` với `font-bold text-inherit` hoặc màu sáng rõ ràng. Không để global `strong` tự đổi sang màu đỏ.
 
 #### Image Readability
 
@@ -132,15 +139,17 @@ Tìm các dấu hiệu:
 - Ảnh bị letterbox nền trắng/xám xấu hoặc thiếu contrast.
 - Ảnh nguồn thuộc slide khác.
 - Raster text/sơ đồ quá nhỏ không đọc được.
+- Raster quote/slogan/heading có chữ là nội dung chính nhưng đang được chèn như ảnh.
 
 Hướng sửa ưu tiên:
 
 - Tăng vùng ảnh hoặc chuyển sang layout ảnh-text hai cột.
-- Dùng `object-contain`/`contain`.
-- Chạy `tools/card_bg_color.py` cho ảnh contain cần nền phù hợp.
+- Dùng crop hoặc tỷ lệ khiến ảnh mất chi tiết quan trọng.
+- Chạy `tools/card_bg_color.py` khi ảnh cần nền phù hợp với màu cạnh.
 - Rebuild raster text/diagram bằng MDX nếu đó là cách duy nhất để đọc được, nhưng không đổi chữ.
+- Rebuild raster quote/slogan/heading bằng MDX text/card ngay cả khi ảnh vẫn đọc được, vì text thật sẽ sắc nét, dễ kiểm soát spacing, và đồng nhất theme hơn.
 - Siết container của ảnh để ảnh chiếm tối đa vùng được cấp; không để khung trắng lớn bao quanh ảnh.
-- Nếu `contain` tạo ra khoảng trống dễ thấy, giảm padding, đổi tỷ lệ vùng, hoặc tăng kích thước ảnh thay vì chấp nhận khoảng trống đó.
+- Nếu ảnh tạo ra khoảng trống dễ thấy, giảm padding, đổi tỷ lệ vùng, hoặc tăng kích thước ảnh thay vì chấp nhận khoảng trống đó.
 
 #### Typography And Density
 
@@ -151,6 +160,7 @@ Tìm các dấu hiệu:
 - Dùng hero-scale type trong card/panel nhỏ.
 - Nhiều dòng dài không có nhịp, khó scan.
 - List bị orphan/widow hoặc một từ lẻ cuối dòng gây xấu.
+- Caption hoặc câu thơ dùng `<br />` khiến khoảng cách dòng không đều, khó chỉnh line-height, hoặc làm wrapper cao hơn cần thiết.
 
 Hướng sửa ưu tiên:
 
@@ -158,6 +168,7 @@ Hướng sửa ưu tiên:
 - Giữ line-height chặt vừa phải: `leading-snug`, `leading-tight`, hoặc arbitrary value khi cần.
 - Chạy `tools/avoid_widows.py` sau khi sửa text wrappers.
 - Không đổi wording để làm đẹp dòng.
+- Đổi các cụm nhiều dòng ngắn từ `<br />` sang các `<div>` con, ví dụ caption 2 dòng, tên người + năm, hoặc câu thơ 2 dòng. Giữ nguyên chữ và thứ tự dòng.
 
 #### Layout And Alignment
 
@@ -169,11 +180,13 @@ Tìm các dấu hiệu:
 - Cột phụ rộng hơn nội dung chính.
 - Nội dung liên quan bị đặt xa nhau.
 - Slide có quá nhiều whitespace trong khi chữ/ảnh lại nhỏ.
+- Cột ảnh rộng nhưng ảnh thực tế hẹp, tạo khoảng trống vô nghĩa giữa ảnh và text.
 
 Hướng sửa ưu tiên:
 
 - Dùng `flex items-stretch gap-*` cho slide có một ảnh và một text block.
 - Dùng tỷ lệ rõ ràng như `basis-[42%]` / `basis-[58%]`.
+- Dùng all-auto arbitrary grids như `grid-cols-[auto_auto]` hoặc `grid-cols-[auto_auto_auto]` khi ảnh/text cần giữ kích thước tự nhiên chặt và áp sát nhau. Không dùng hard-coded `fr` ratios trong arbitrary grid templates nếu người dùng không yêu cầu rõ.
 - Tăng chiều cao vùng chính thay vì thêm nhiều khoảng trắng.
 - Giữ spacing compact: thường `gap-1`, `gap-2`, `gap-3`, `mt-2`, `mt-4`.
 - Luôn hỏi: phần trống này có thực sự cần không. Nếu không, mở rộng nội dung meaningful vào phần trống đó.
@@ -191,16 +204,21 @@ Khi sửa MDX:
 - Không tạo global CSS nếu sửa được bằng Tailwind tại slide.
 - Không dùng `position:absolute` nếu flex/grid giải quyết được.
 - Không thêm `h3` cho card title hoặc label nhỏ.
+- Không dùng `<p>` cho text block cần spacing bằng `mt-*`, `mb-*`, hoặc important margin như `mt-5!`; Marp/theme paragraph rules có thể làm margin không hoạt động. Đổi sang `<div className="...">` với cùng class cho các block cần spacing rõ ràng. Chỉ dùng `<p>` khi paragraph spacing được điều khiển bởi parent/card gap, không phụ thuộc margin utility.
+- Không đặt `<p>` bên trong `Card`. `Card` đã kiểm soát flex layout và gap, còn paragraph default dễ tạo margin ngoài ý muốn hoặc làm spacing utility không ổn định. Nếu card chỉ có một text block, chuyển typography class lên `Card`; nếu có nhiều block, dùng `div`/`span` con.
 - Giữ JSX hợp lệ: dùng `className`, self-close component rỗng.
 - Không chấp nhận ảnh bị lọt trong card có padding trắng lớn chỉ vì nhìn “gọn”.
 - Không chấp nhận slide còn nhiều khoảng trắng nếu vẫn còn cách phóng to ảnh, text, hoặc siết nhóm nội dung mà không làm hại readability.
+- Không dùng `<br />` như công cụ layout mặc định cho caption/label nhiều dòng; dùng block children để kiểm soát khoảng cách dòng.
+- Không dùng grid tỷ lệ `fr` cứng như `grid-cols-[0.78fr_1.22fr]`; đổi sang all-auto arbitrary grids và tự kiểm lại render để tránh overflow.
+- Không dùng `<strong>` trong card có nền màu hoặc `accent`; dùng `font-bold text-inherit` để giữ tương phản.
 
 ## Quy Trình Sửa Khuyến Nghị
 
 1. Lập danh sách vấn đề theo slide, ưu tiên lỗi ảnh nhỏ, overflow, component sai, rồi mới đến tinh chỉnh spacing.
    Trong bước này, mặc định coi `excess whitespace` và `visible image padding` là lỗi hạng cao, không phải lỗi cosmetic nhẹ.
 2. Sửa MDX bằng thay đổi nhỏ, có chủ đích.
-3. Nếu ảnh contain có nền xấu, chạy:
+3. Nếu ảnh cần nền hợp với màu cạnh, chạy:
 
 ```sh
 python3 tools/card_bg_color.py <asset_path> --ignore-white
@@ -242,7 +260,7 @@ Mẫu:
 ```md
 Đã review và chỉnh thiết kế slide 12-18 trong `courses/giao_duc_chinh_tri/md_slides/bai_02.mdx`.
 
-Đã giảm card vụn ở slide 13, tăng kích thước ảnh meaningful ở slide 15, đổi ảnh sang `MediaCard contain`, và siết lại spacing để không tràn. Nội dung bài học được giữ nguyên.
+Đã giảm card vụn ở slide 13, tăng kích thước ảnh meaningful ở slide 15, đổi ảnh sang `MediaCard` có kích thước rõ ràng, và siết lại spacing để không tràn. Nội dung bài học được giữ nguyên.
 
 Đã chạy:
 - `python3 tools/avoid_widows.py courses/giao_duc_chinh_tri/md_slides/bai_02.mdx`

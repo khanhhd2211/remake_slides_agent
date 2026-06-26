@@ -32,7 +32,7 @@ Every image must come from the same source slide unless there is an explicit, do
 
 If a source slide has meaningful images, do not drop them without a reason. Omit only decorative fragments, broken artifacts, duplicates, or images that do not support the slide message. When omitting an image, the surrounding text layout must still preserve the slide's intended meaning.
 
-For e-learning readability, images and text must be large enough to understand without zooming. Prefer fewer, clearer visual regions over dense miniatures. If an image contains important labels or details, size it generously and use `object-contain` so the details remain legible.
+For e-learning readability, images and text must be large enough to understand without zooming. Prefer fewer, clearer visual regions over dense miniatures. If an image contains important labels or details, size it generously and choose a layout that preserves the useful content without leaving a large padded frame.
 
 ## Project Structure
 
@@ -100,15 +100,27 @@ Use `className`, not `class`. Self-close image tags and components when empty: `
 
 Do not use `h3` tags for card titles, labels, diagram nodes, captions, or small section headings inside a slide. Marp theme heading rules can change margins, font size, and auto-scaling in ways that shift layouts. Use `div` or `span` with explicit Tailwind text utilities instead, such as `text-sm`, `text-lg`, `text-xl`, `font-bold`, and `leading-tight`. Reserve semantic headings for actual slide-level structure, usually `h2` for the main slide title.
 
+Do not use `<p>` when the element needs Tailwind margin utilities such as `mt-*`, `mb-*`, or important variants like `mt-5!`. Marp/theme paragraph rules can override or collapse paragraph spacing, so those utilities may not render as intended. Use a `<div>` with the same classes for standalone text blocks that need explicit layout spacing. Reserve `<p>` for plain paragraph text whose spacing is controlled by the parent/card gap rather than by margin utilities.
+
+Do not place `<p>` elements inside `Card`. `Card` already controls flex layout and gap, while paragraph defaults can add unexpected margins or ignore spacing utilities. Move typography classes to `Card` when the card contains only one text block, or use `div`/`span` children for multiple text blocks inside a card.
+
 Keep spacing compact by default. Prefer small gaps such as `gap-1` or `gap-2`, and avoid large vertical offsets; most slide sections should use only `mt-2` or `mt-4`. Use larger spacing only when the new theme layout clearly needs it and the rendered slide has been visually checked. Because these decks are for e-learning, prioritize readable text and images over decorative whitespace.
 
 Treat slide whitespace as a constrained resource. Do not leave large empty bands above, below, or between content blocks when that space could be used to enlarge text or images. Layouts should be dense, balanced, and space-efficient by default; only keep whitespace that clearly improves grouping or readability.
+
+Prefer explicit block lines over `<br />` when controlling captions, quotes, or short stacked labels inside JSX. For example, use separate `<div>` children inside a compact wrapper instead of inserting `<br />` between text lines. This gives the layout engine predictable line boxes and avoids accidental extra leading, uneven vertical rhythm, and hard-to-control whitespace. Reserve `<br />` for rare inline text where the line break is genuinely part of the source wording and a block wrapper would change the visual grouping.
+
+For image-and-text layouts, size columns around the actual visual weight of the content. Avoid fixed proportional grids such as `grid-cols-[0.78fr_1.22fr]`; they often create unused space or make a narrow image sit inside a large column. Prefer all-auto arbitrary grids such as `grid-cols-[auto_auto]` or `grid-cols-[auto_auto_auto]`, with explicit image/card widths and heights. Do not introduce hard-coded `fr` ratios in arbitrary grid templates unless the user explicitly asks for a proportional layout.
 
 Use arbitrary Tailwind values when the new theme layout needs exact sizing, for example `text-[20px]`, `gap-[6px]`, `min-h-[248px]`, or `px-[18px]`. Do not blindly accept Tailwind IntelliSense canonical suggestions if they change the rendered size.
 
 For layouts with one image and one neighboring text block in the same row, prefer an explicit flexbox row such as `flex items-stretch gap-4` with proportional child widths. This usually gives better control than a rigid grid and keeps the image visually connected to the related text.
 
-Images must visually fill their allocated region as much as possible. Do not place images inside padded white cards, loose frames, or oversized containers that leave visible empty margins around the image. If an image uses `contain`, the surrounding frame must still be tight to the image content, and any unavoidable letterboxing should be minimized and handled with a background color that blends closely with the image edges.
+Images must visually fill their allocated region as much as possible. Do not place images inside padded white cards, loose frames, or oversized containers that leave visible empty margins around the image. The current `MediaCard` is cover-first; avoid adding legacy `contain` props in new edits. If preserving full image content is necessary, solve it with explicit dimensions, natural aspect ratio, or a redesigned layout that still keeps the frame tight.
+
+Do not wrap a single `MediaCard` or `<img>` in a `Card` merely to create a border, rounded corner, shadow, or padding. `MediaCard` already owns its visual frame. If an image needs a caption, place the image and caption in a compact unframed `div` or make the image/caption group itself the repeated item, without adding a padded card that shrinks the image.
+
+Do not use `<strong>` inside colored cards or cards with `accent="red"`, `accent="navy"`, `accent="blue"`, `accent="green"`, or a solid colored background. The global theme makes `strong` red, which breaks contrast on colored cards. Use `span`/`div` with `font-bold text-inherit` or an explicit light color instead.
 
 Avoid raw Markdown list syntax inside JSX children unless a list is intended. Text like `1. Vị trí...` may become an ordered list; escape it as `1\. Vị trí...` or place it in a prop/string when needed.
 
@@ -143,19 +155,21 @@ The remade deck must keep the same number of slides as the source lesson unless 
 
 Do not omit required content. Keep source wording intact whenever possible; only rephrase lightly for obvious readability issues and never for dates, named events, people, institutions, political/legal terms, assessment criteria, or chronology. You may add small clarifying labels or improve visual grouping, but do not add unsupported facts, extra claims, or decorative text that changes the lesson meaning. Extra design elements are acceptable only when they support the existing content.
 
-Images must preserve their important details. Do not crop an image in a way that removes meaningful information, labels, people, diagrams, icons, or context. Prefer `object-contain`, full-image framing, or a redesigned layout over `object-cover` when the image carries content. If a crop is purely decorative, confirm that no useful information is lost. Do not substitute an AI-generated scene or illustration for a meaningful source image.
+Images must preserve their important details. Do not crop an image in a way that removes meaningful information, labels, people, diagrams, icons, or context. Prefer full-image framing or a redesigned layout over an unsafe crop when the image carries content. If a crop is purely decorative, confirm that no useful information is lost. Do not substitute an AI-generated scene or illustration for a meaningful source image.
 
-Keep image padding tight by default. Avoid wrapping images in large padded boxes unless readability requires it; use `object-contain`, compact captions, and theme-compatible backgrounds so the image stays readable without losing detail.
+Keep image padding tight by default. Avoid wrapping images in large padded boxes unless readability requires it; use compact captions, explicit image sizing, and theme-compatible backgrounds so the image stays readable without losing detail.
 
 If an image area still shows obvious empty padding or a large blank frame in the final render, treat that as a design defect and revise the layout. The default expectation is that images sit flush or nearly flush within their visual container, without visible dead space around them.
 
 If an extracted image is only text, a text-heavy diagram, or a low-quality raster of content that should be readable, rebuild it as MDX text/cards/diagram blocks instead of inserting the raster image. Meaningful photos, portraits, maps, document scans, and illustrations should still be included when they support the slide.
 
+If an extracted image is a stylized quote, slogan, heading, or other mostly-text visual, transcribe the text into MDX and rebuild it with theme typography/components instead of placing the raster. This is especially required when the raster has distorted effects, reflections, shadows, low contrast, or small text that hurts readability. Preserve the wording exactly from the source image/YAML; do not add new content.
+
 After placing each image, review the rendered slide and compare it with the source screenshot for content completeness and image-text relevance only. The image must be clear enough to understand, visually related to nearby text, and not stretched, blurred, clipped, or hidden behind other elements.
 
 After finishing a deck or range, render and inspect the output for overflow. No slide should have text, captions, cards, or images running outside the slide bounds; fix spacing, font size, or layout before final delivery.
 
-Use `tools/card_bg_color.py` to choose image-card backgrounds for `object-contain` images or images with visible letterboxing. Run it on the final asset path, preferably with `--ignore-white`, then pass the suggested hex color to `MediaCard` via `bgColor`, for example:
+Use `tools/card_bg_color.py` to choose image-card backgrounds for images with visible edge color or unavoidable letterboxing. Run it on the final asset path, preferably with `--ignore-white`, then pass the suggested hex color to `MediaCard` via `bgColor`, for example:
 
 ```sh
 python3 tools/card_bg_color.py courses/giao_duc_chinh_tri/assets/bai_02_s098_image_01.jpg --ignore-white
@@ -164,7 +178,6 @@ python3 tools/card_bg_color.py courses/giao_duc_chinh_tri/assets/bai_02_s098_ima
 ```mdx
 <MediaCard
   className="h-[220px]"
-  contain
   src="../assets/bai_02_s098_image_01.jpg"
   bgColor="#D8D1C6"
   alt="Minh họa hoạt động sản xuất vật chất"
