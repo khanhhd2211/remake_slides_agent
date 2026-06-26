@@ -9,7 +9,8 @@
     "watch:mdx": "node ./tools/render_mdx.mjs --all --watch",
     "watch:css": "node ./tools/build_marp_theme.js --watch",
     "preview": "node ./tools/preview_marp.js",
-    "html": "npm run build:css && node ./tools/export_html.js"
+    "html": "npm run build:css && node ./tools/export_html.js",
+    "check:overflow": "node ./tools/check_slide_overflow.js"
   },
   "keywords": [],
   "author": "",
