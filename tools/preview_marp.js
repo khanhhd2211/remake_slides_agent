@@ -6,6 +6,7 @@ const root = path.resolve(__dirname, "..");
 const course = process.env.COURSE || process.argv[2] || "giao_duc_chinh_tri";
 const courseRoot = path.join(root, "courses", course);
 const slidesDir = path.join(courseRoot, "md_slides");
+const renderedCourseDir = path.join(root, ".marp-cache", course);
 const renderedSlidesDir = path.join(root, ".marp-cache", course, "md_slides");
 const marpBin = path.join(root, "node_modules", ".bin", "marp");
 
@@ -45,7 +46,7 @@ const marp = spawn(
   [
     "--server",
     "--input-dir",
-    path.relative(root, renderedSlidesDir),
+    path.relative(root, renderedCourseDir),
     "--theme",
     "./template/theme.css",
     "--engine",

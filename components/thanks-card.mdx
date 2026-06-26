@@ -1,9 +1,13 @@
-<div
-  className="absolute inset-0 bg-[image:linear-gradient(rgba(19,40,75,0.77),rgba(19,40,75,0.77)),var(--thanks-image,linear-gradient(135deg,#13284b,#13284b))] bg-cover bg-center"
-  style={{
-    "--thanks-image": `url('${props.background || "../assets/classroom-discussion.jpg"}')`,
-  }}
-></div>
+<img
+  className="absolute inset-0 h-full w-full object-cover object-center"
+  src={
+    props.background?.startsWith("../assets/")
+      ? props.background.replace("../assets/", "/assets/")
+      : props.background || "/assets/classroom-discussion.jpg"
+  }
+  alt=""
+/>
+<div className="absolute inset-0 bg-[rgba(19,40,75,0.77)]"></div>
 <img
   className="absolute left-[44px] top-[32px] z-10 h-[84px] w-[84px] object-contain opacity-70"
   src={props.logoSrc || "../assets/logo.png"}

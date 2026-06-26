@@ -102,9 +102,13 @@ Do not use `h3` tags for card titles, labels, diagram nodes, captions, or small 
 
 Keep spacing compact by default. Prefer small gaps such as `gap-1` or `gap-2`, and avoid large vertical offsets; most slide sections should use only `mt-2` or `mt-4`. Use larger spacing only when the new theme layout clearly needs it and the rendered slide has been visually checked. Because these decks are for e-learning, prioritize readable text and images over decorative whitespace.
 
+Treat slide whitespace as a constrained resource. Do not leave large empty bands above, below, or between content blocks when that space could be used to enlarge text or images. Layouts should be dense, balanced, and space-efficient by default; only keep whitespace that clearly improves grouping or readability.
+
 Use arbitrary Tailwind values when the new theme layout needs exact sizing, for example `text-[20px]`, `gap-[6px]`, `min-h-[248px]`, or `px-[18px]`. Do not blindly accept Tailwind IntelliSense canonical suggestions if they change the rendered size.
 
 For layouts with one image and one neighboring text block in the same row, prefer an explicit flexbox row such as `flex items-stretch gap-4` with proportional child widths. This usually gives better control than a rigid grid and keeps the image visually connected to the related text.
+
+Images must visually fill their allocated region as much as possible. Do not place images inside padded white cards, loose frames, or oversized containers that leave visible empty margins around the image. If an image uses `contain`, the surrounding frame must still be tight to the image content, and any unavoidable letterboxing should be minimized and handled with a background color that blends closely with the image edges.
 
 Avoid raw Markdown list syntax inside JSX children unless a list is intended. Text like `1. Vị trí...` may become an ordered list; escape it as `1\. Vị trí...` or place it in a prop/string when needed.
 
@@ -131,6 +135,8 @@ Remake the intent, not just the objects. Before writing a slide:
 
 Never place unrelated text next to an image. Never copy a poor extracted image just because it exists in YAML. Check that the final slide is readable, aligned, and not overflowing. If content is long, redesign with cards, columns, steps, or ask before splitting slides instead of shrinking everything blindly or deleting content.
 
+Do not use whitespace as decoration. If a slide feels sparse, first enlarge the meaningful image, tighten grouping, widen text blocks, or reduce container padding before accepting empty space.
+
 ## Non-Negotiable Fidelity Rules
 
 The remade deck must keep the same number of slides as the source lesson unless the user explicitly approves splitting or merging slides. Every source slide must have a corresponding remade slide, and the information from each slide must not be dropped, moved to the wrong context, or changed in meaning.
@@ -140,6 +146,8 @@ Do not omit required content. Keep source wording intact whenever possible; only
 Images must preserve their important details. Do not crop an image in a way that removes meaningful information, labels, people, diagrams, icons, or context. Prefer `object-contain`, full-image framing, or a redesigned layout over `object-cover` when the image carries content. If a crop is purely decorative, confirm that no useful information is lost. Do not substitute an AI-generated scene or illustration for a meaningful source image.
 
 Keep image padding tight by default. Avoid wrapping images in large padded boxes unless readability requires it; use `object-contain`, compact captions, and theme-compatible backgrounds so the image stays readable without losing detail.
+
+If an image area still shows obvious empty padding or a large blank frame in the final render, treat that as a design defect and revise the layout. The default expectation is that images sit flush or nearly flush within their visual container, without visible dead space around them.
 
 If an extracted image is only text, a text-heavy diagram, or a low-quality raster of content that should be readable, rebuild it as MDX text/cards/diagram blocks instead of inserting the raster image. Meaningful photos, portraits, maps, document scans, and illustrations should still be included when they support the slide.
 
@@ -204,3 +212,5 @@ Before considering a deck or range complete, run a fidelity pass:
 - Confirm each image path belongs to the same source slide, unless a cross-slide reuse was explicitly approved.
 - Confirm no AI-generated replacement image was introduced.
 - Render and inspect the output for e-learning readability: text, labels, and important image details must be large enough to read comfortably.
+- Confirm slides are space-efficient: no large unused whitespace remains when text or images could be enlarged or grouped more tightly.
+- Confirm images do not sit inside visibly padded frames or containers with unnecessary empty margins.

@@ -3,12 +3,16 @@
   alt={props.logoAlt || "Logo trường"}
   position="top-left"
 />
-<div
-  className="absolute inset-[-18px] scale-[1.04] bg-[image:linear-gradient(rgba(20,14,9,0.58),rgba(20,14,9,0.58)),var(--cover-image,linear-gradient(135deg,#13284b,#bd2d2d))] bg-cover bg-center blur-[6px] saturate-75 brightness-75"
-  style={{
-    "--cover-image": `url('${props.background || "../assets/vietnam-national-assembly.jpg"}')`,
-  }}
-></div>
+<img
+  className="absolute inset-[-18px] h-[calc(100%+36px)] w-[calc(100%+36px)] scale-[1.04] object-cover object-center blur-[6px] saturate-75 brightness-75"
+  src={
+    props.background?.startsWith("../assets/")
+      ? props.background.replace("../assets/", "/assets/")
+      : props.background || "/assets/vietnam-national-assembly.jpg"
+  }
+  alt=""
+/>
+<div className="absolute inset-0 bg-[rgba(20,14,9,0.58)]"></div>
 <div className="relative text-center text-[78px] font-extrabold uppercase leading-[1.2] text-[#fff8eb] drop-shadow-[0_6px_28px_rgba(0,0,0,0.48)]">
   <span className="absolute left-1/2 top-[-64px] inline-block -translate-x-1/2 rounded-full border border-[#fff7e8]/70 px-3 py-[9px] text-xs font-bold leading-none tracking-[0.18em] text-[#fff7e8]/90">
     {props.lesson}
