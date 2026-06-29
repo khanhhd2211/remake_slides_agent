@@ -51,7 +51,7 @@ Never read or parse `.pptx` files directly from `source-ppt/`. Always create or 
 If `courses/<course_id>/pptx-analysis/<deck>/<deck>.yaml` is missing, run:
 
 ```sh
-python3 tools/extract_pptx_structure.py courses/giao_duc_chinh_tri/source-ppt/bai_01.pptx
+uv run python tools/extract_pptx_structure.py courses/giao_duc_chinh_tri/source-ppt/bai_01.pptx
 ```
 
 The extractor creates:
@@ -63,7 +63,7 @@ The extractor creates:
 For token efficiency, do not load the full YAML for large decks. Use:
 
 ```sh
-python3 tools/slide_yaml_slice.py courses/giao_duc_chinh_tri/pptx-analysis/bai_02/bai_02.yaml --slides 1,4,7-9 --paths
+uv run python tools/slide_yaml_slice.py courses/giao_duc_chinh_tri/pptx-analysis/bai_02/bai_02.yaml --slides 1,4,7-9 --paths
 ```
 
 Each YAML slide contains `number`, `screenshot`, `texts`, and `images`. Resolve screenshot and image paths relative to the YAML folder. Always inspect the `screenshot` image before remaking the slide so the content hierarchy, reading order, and relationships between text and visuals are understood. Do not use screenshots as style references for colors, fonts, backgrounds, or decorative treatments.
@@ -183,7 +183,7 @@ After finishing a deck or range, render and inspect the output for overflow. No 
 Use `tools/card_bg_color.py` to choose image-card backgrounds for images with visible edge color or unavoidable letterboxing. Run it on the final asset path, preferably with `--ignore-white`, then pass the suggested hex color to `MediaCard` via `bgColor`, for example:
 
 ```sh
-python3 tools/card_bg_color.py courses/giao_duc_chinh_tri/assets/bai_02_s098_image_01.jpg --ignore-white
+uv run python tools/card_bg_color.py courses/giao_duc_chinh_tri/assets/bai_02_s098_image_01.jpg --ignore-white
 ```
 
 ```mdx
@@ -198,7 +198,7 @@ python3 tools/card_bg_color.py courses/giao_duc_chinh_tri/assets/bai_02_s098_ima
 Use `tools/avoid_widows.py` before final render to reduce orphan words in supported text tags (`p`, `li`, headings, `span`, and captions). Run it on the edited deck, and on fragments too if fragments are kept as source material:
 
 ```sh
-python3 tools/avoid_widows.py courses/giao_duc_chinh_tri/md_slides/bai_02.mdx
+uv run python tools/avoid_widows.py courses/giao_duc_chinh_tri/md_slides/bai_02.mdx
 ```
 
 After running either tool, rerender the deck and visually check affected slides. Tool output is a starting point, not a substitute for layout review.
@@ -209,6 +209,7 @@ Install dependencies:
 
 ```sh
 npm install
+uv sync
 ```
 
 Common commands:

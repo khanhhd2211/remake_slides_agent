@@ -5,7 +5,7 @@ This keeps AI review focused on a small slide range instead of loading the
 entire analysis file.
 
 Usage:
-    python tools/slide_yaml_slice.py courses/giao_duc_chinh_tri/pptx-analysis/bai_02/bai_02.yaml --slides 1,4,7-9
+    uv run python tools/slide_yaml_slice.py courses/giao_duc_chinh_tri/pptx-analysis/bai_02/bai_02.yaml --slides 1,4,7-9
 """
 
 from __future__ import annotations

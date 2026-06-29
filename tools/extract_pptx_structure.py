@@ -2,8 +2,8 @@
 """Extract PPTX slide text, embedded images, and slide screenshots to YAML.
 
 Usage:
-    tools/extract_pptx_structure.py courses/giao_duc_phap_luat/source-ppt/bai_01.pptx
-    tools/extract_pptx_structure.py courses/giao_duc_phap_luat/source-ppt/bai_01.pptx --out courses/giao_duc_phap_luat/output/bai_01.yaml
+    uv run python tools/extract_pptx_structure.py courses/giao_duc_phap_luat/source-ppt/bai_01.pptx
+    uv run python tools/extract_pptx_structure.py courses/giao_duc_phap_luat/source-ppt/bai_01.pptx --out courses/giao_duc_phap_luat/output/bai_01.yaml
 
 PPTX structure is read with python-pptx. Slide screenshots are rendered by
 converting the full PPTX to a temporary PDF with LibreOffice (`soffice`), then
@@ -25,8 +25,8 @@ try:
     from pptx.enum.shapes import MSO_SHAPE_TYPE
 except ImportError as exc:  # pragma: no cover - exercised by CLI environment.
     raise SystemExit(
-        "Missing dependency: python-pptx. Activate your environment first, "
-        "for example: `conda activate ds`."
+        "Missing dependency: python-pptx. Install the project environment with "
+        "`uv sync`, then rerun this command with `uv run python ...`."
     ) from exc
 
 

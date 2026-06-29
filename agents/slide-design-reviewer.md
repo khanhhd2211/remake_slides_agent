@@ -232,13 +232,13 @@ Khi sửa MDX:
 3. Nếu ảnh cần nền hợp với màu cạnh, chạy:
 
 ```sh
-python3 tools/card_bg_color.py <asset_path> --ignore-white
+uv run python tools/card_bg_color.py <asset_path> --ignore-white
 ```
 
 4. Chạy:
 
 ```sh
-python3 tools/avoid_widows.py courses/<course_id>/md_slides/<deck>.mdx
+uv run python tools/avoid_widows.py courses/<course_id>/md_slides/<deck>.mdx
 COURSE=<course_id> DECK=<deck> npm run html
 ```
 
@@ -274,7 +274,7 @@ Mẫu:
 Đã giảm card vụn ở slide 13, tăng kích thước ảnh meaningful ở slide 15, đổi ảnh sang `MediaCard` có kích thước rõ ràng, và siết lại spacing để không tràn. Nội dung bài học được giữ nguyên.
 
 Đã chạy:
-- `python3 tools/avoid_widows.py courses/giao_duc_chinh_tri/md_slides/bai_02.mdx`
+- `uv run python tools/avoid_widows.py courses/giao_duc_chinh_tri/md_slides/bai_02.mdx`
 - `COURSE=giao_duc_chinh_tri DECK=bai_02 npm run html`
 ```
 

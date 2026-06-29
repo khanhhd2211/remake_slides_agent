@@ -1,10 +1,6 @@
 <img
   className="absolute inset-0 h-full w-full object-cover object-center"
-  src={
-    props.background?.startsWith("../assets/")
-      ? props.background.replace("../assets/", "/assets/")
-      : props.background || "/assets/classroom-discussion.jpg"
-  }
+  src={props.background || "../assets/classroom-discussion.jpg"}
   alt=""
 />
 <div className="absolute inset-0 bg-[rgba(19,40,75,0.77)]"></div>

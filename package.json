@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build:css": "node ./tools/build_marp_theme.js",
+    "py:sync": "uv sync",
     "render:components": "node ./tools/render_mdx.mjs",
     "watch:mdx": "node ./tools/render_mdx.mjs --all --watch",
     "watch:css": "node ./tools/build_marp_theme.js --watch",
@@ -13,8 +14,7 @@
     "check:overflow": "node ./tools/check_slide_overflow.js",
     "check:images": "node ./tools/check_slide_images.js",
     "check:alpha-png": "node ./tools/check_alpha_png_assets.js",
-    "check:image-quality": "node ./tools/check_slide_image_quality.js",
-    "sharpen:slide-images": "python3 ./tools/sharpen_slide_images.py"
+    "check:image-quality": "node ./tools/check_slide_image_quality.js"
   },
   "keywords": [],
   "author": "",
