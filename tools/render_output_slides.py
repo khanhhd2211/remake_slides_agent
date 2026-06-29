@@ -12,15 +12,21 @@ This script:
 1. Finds `.mdx` / `.md` decks in `courses/<course>/md_slides/`
 2. Renders MDX to `.marp-cache/.../*.md`
 3. Exports each rendered deck to `.pptx` with the local Marp CLI
+4. Writes each slide's textual content into the PPTX speaker notes in Markdown form
 """
 
 from __future__ import annotations
 
 import argparse
+import html
+import re
 import subprocess
 import sys
 import shutil
 from pathlib import Path
+
+from pptx import Presentation
+from pptx.enum.shapes import PP_PLACEHOLDER
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,6 +37,13 @@ DEFAULT_ENGINE = ROOT / "engine.js"
 DEFAULT_MARP = ROOT / "node_modules" / ".bin" / "marp"
 RENDER_MDX_SCRIPT = ROOT / "tools" / "render_mdx.mjs"
 DEFAULT_NODE = shutil.which("node") or "node"
+SLIDE_SPLIT_RE = re.compile(r"\n---\n")
+DIRECTIVE_COMMENT_RE = re.compile(r"^\s*\{/\*[\s\S]*?\*/\}\s*$", re.M)
+TEMPLATE_LITERAL_RE = re.compile(r"\{`([\s\S]*?)`\}")
+JSX_SPACE_RE = re.compile(r'\{" "\}')
+TAG_RE = re.compile(r"</?[^>]+>")
+MULTIBLANK_RE = re.compile(r"\n{3,}")
+PROP_RE_TEMPLATE = r'{name}\s*=\s*"([^"]+)"'
 
 
 def deck_name_of(path: Path) -> str:
@@ -64,8 +77,118 @@ def render_mdx(course: str, deck: str, dry_run: bool) -> None:
     subprocess.run(cmd, cwd=ROOT, check=True)
 
 
+def source_deck_path(course: str, deck: str) -> Path:
+    slides_dir = ROOT / "courses" / course / "md_slides"
+    mdx_path = slides_dir / f"{deck}.mdx"
+    if mdx_path.exists():
+        return mdx_path
+    return slides_dir / f"{deck}.md"
+
+
 def rendered_markdown_path(course: str, deck: str) -> Path:
     return ROOT / ".marp-cache" / course / "md_slides" / f"{deck}.md"
+
+
+def split_frontmatter(source: str) -> tuple[str, str]:
+    if not source.startswith("---\n"):
+        return "", source
+    end = source.find("\n---", 4)
+    if end == -1:
+        return "", source
+    return source[: end + 4], source[end + 5 :].lstrip("\n")
+
+
+def prop_value(block: str, name: str) -> str | None:
+    match = re.search(PROP_RE_TEMPLATE.format(name=re.escape(name)), block)
+    return match.group(1) if match else None
+
+
+def extract_component_note(block: str) -> str | None:
+    if "<CoverSlide" in block:
+        lines = []
+        if lesson := prop_value(block, "lesson"):
+            lines.append(f"# {lesson}")
+        if title := prop_value(block, "title"):
+            lines.append(title)
+        if school := prop_value(block, "school"):
+            lines.append("")
+            lines.append(f"- Trường: {school}")
+        if website := prop_value(block, "website"):
+            lines.append(f"- Website: {website}")
+        return "\n".join(lines).strip()
+
+    if "<ThanksCard" in block:
+        lines = [f"# {prop_value(block, 'title') or 'Xin trân trọng cám ơn'}"]
+        school = prop_value(block, "school") or "Trường Trung Cấp Công Nghệ Hà Nội"
+        address = prop_value(block, "address") or (
+            "Tầng 4, Trung tâm Văn hóa Nghệ thuật, đường Mai Dịch, quận Cầu Giấy, Hà Nội"
+        )
+        hotline = prop_value(block, "hotline") or (
+            "0933.279.868 (Thầy Tùng) - 090.323.0405 (Cô Ngân) - 035.988.3882 (Thầy Trọng)"
+        )
+        email = prop_value(block, "email") or "trungcapcongnghehanoi.edu.vn@gmail.com"
+        website = prop_value(block, "website") or "trungcapcongnghehanoi.edu.vn"
+        lines.append("")
+        lines.append(f"- Trường: {school}")
+        lines.append(f"- Địa chỉ: {address}")
+        lines.append(f"- Hotline: {hotline}")
+        lines.append(f"- Email: {email}")
+        lines.append(f"- Website: {website}")
+        return "\n".join(lines).strip()
+
+    return None
+
+
+def markdown_note_from_slide_source(block: str) -> str:
+    component_note = extract_component_note(block)
+    if component_note:
+        return component_note
+
+    text = DIRECTIVE_COMMENT_RE.sub("", block)
+    text = JSX_SPACE_RE.sub(" ", text)
+    text = TEMPLATE_LITERAL_RE.sub(lambda m: m.group(1), text)
+    text = text.replace("&nbsp;", " ")
+    text = re.sub(r"\{\s*props\.[^}]+\s*\|\|\s*\"([^\"]+)\"\s*\}", r"\1", text)
+    text = TAG_RE.sub("", text)
+    text = html.unescape(text)
+    text = re.sub(r"[ \t]+\n", "\n", text)
+    text = re.sub(r"\n[ \t]+", "\n", text)
+    text = MULTIBLANK_RE.sub("\n\n", text)
+    return text.strip()
+
+
+def slide_notes_from_deck(deck_path: Path) -> list[str]:
+    source = deck_path.read_text(encoding="utf-8")
+    _, body = split_frontmatter(source)
+    slides = SLIDE_SPLIT_RE.split(body)
+    return [markdown_note_from_slide_source(slide) for slide in slides]
+
+
+def attach_slide_notes(output_pptx: Path, notes: list[str], dry_run: bool) -> None:
+    if dry_run:
+        return
+
+    prs = Presentation(output_pptx)
+    slide_count = len(prs.slides)
+    if slide_count != len(notes):
+        raise SystemExit(
+            f"Cannot attach notes: PPTX has {slide_count} slides but source deck produced {len(notes)} note blocks."
+        )
+
+    for slide, note in zip(prs.slides, notes, strict=True):
+        notes_slide = slide.notes_slide
+        body_placeholder = None
+        for placeholder in notes_slide.placeholders:
+            if placeholder.placeholder_format.type == PP_PLACEHOLDER.BODY:
+                body_placeholder = placeholder
+                break
+
+        if body_placeholder is None:
+            continue
+
+        body_placeholder.text = note or f"# Slide {slide.slide_id}"
+
+    prs.save(output_pptx)
 
 
 def export_pptx(
@@ -180,6 +303,11 @@ def main() -> int:
         action="store_true",
         help="Print commands without running them.",
     )
+    parser.add_argument(
+        "--no-notes",
+        action="store_true",
+        help="Skip writing per-slide Markdown notes into the exported PPTX.",
+    )
     args = parser.parse_args()
 
     course_root = ROOT / "courses" / args.course
@@ -209,11 +337,12 @@ def main() -> int:
 
     for deck_path in decks:
         deck = deck_name_of(deck_path)
+        source_deck = source_deck_path(args.course, deck)
         rendered_md = rendered_markdown_path(args.course, deck)
         output_pptx = dest_dir / f"{deck}.pptx"
 
         print(f"\n==> {deck}")
-        print(f"    Source: {deck_path.relative_to(ROOT)}")
+        print(f"    Source: {source_deck.relative_to(ROOT)}")
         print(f"    Cache:  {rendered_md.relative_to(ROOT)}")
         print(f"    PPTX:   {output_pptx.relative_to(ROOT)}")
 
@@ -229,6 +358,9 @@ def main() -> int:
             editable=args.editable,
             dry_run=args.dry_run,
         )
+        if not args.no_notes:
+            notes = slide_notes_from_deck(source_deck)
+            attach_slide_notes(output_pptx, notes, args.dry_run)
 
     print("\nDone.")
     return 0
