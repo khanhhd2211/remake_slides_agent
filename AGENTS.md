@@ -124,7 +124,7 @@ Do not wrap a single `MediaCard` or `<img>` in a `Card` merely to create a borde
 
 Do not use `<strong>` inside colored cards or cards with `accent="red"`, `accent="navy"`, `accent="blue"`, `accent="green"`, or a solid colored background. The global theme makes `strong` red, which breaks contrast on colored cards. Use `span`/`div` with `font-bold text-inherit` or an explicit light color instead.
 
-Avoid raw Markdown list syntax inside JSX children unless a list is intended. Text like `1. Vị trí...` may become an ordered list; escape it as `1\. Vị trí...` or place it in a prop/string when needed.
+Avoid raw Markdown list syntax inside JSX children unless a list is intended. Any text node that begins with a numbered marker such as `1.`, `2.`, `3.` must be escaped as `1\.`, `2\.`, `3\.` unless you intentionally want an ordered list. Apply this even for short labels, captions, card content, headings rendered from JSX children, and standalone lines like `1\. Vị trí...` or `1\. Sự tinh tế trong ứng xử`.
 
 ## Component Guidance
 

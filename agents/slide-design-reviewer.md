@@ -213,6 +213,7 @@ Khi sửa MDX:
 - Không tạo global CSS nếu sửa được bằng Tailwind tại slide.
 - Không dùng `position:absolute` nếu flex/grid giải quyết được.
 - Không thêm `h3` cho card title hoặc label nhỏ.
+- Không để text node trong JSX bắt đầu bằng dạng đánh số Markdown như `1.`, `2.`, `3.` trừ khi thật sự muốn tạo ordered list. Mặc định phải escape thành `1\.`, `2\.`, `3\.` trong card content, caption, label, kicker, heading, và các dòng độc lập.
 - Không dùng `<p>` cho text block cần spacing bằng `mt-*`, `mb-*`, hoặc important margin như `mt-5!`; Marp/theme paragraph rules có thể làm margin không hoạt động. Đổi sang `<div className="...">` với cùng class cho các block cần spacing rõ ràng. Chỉ dùng `<p>` khi paragraph spacing được điều khiển bởi parent/card gap, không phụ thuộc margin utility.
 - Không đặt `<p>` bên trong `Card`. `Card` đã kiểm soát flex layout và gap, còn paragraph default dễ tạo margin ngoài ý muốn hoặc làm spacing utility không ổn định. Nếu card chỉ có một text block, chuyển typography class lên `Card`; nếu có nhiều block, dùng `div`/`span` con.
 - Giữ JSX hợp lệ: dùng `className`, self-close component rỗng.
